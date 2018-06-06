@@ -1,0 +1,118 @@
+@import "font-awesome.min.css";
+body, html{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+}
+.page-container{
+    min-height: 100%;
+}
+.el-main{
+    padding: initial;
+}
+.es-main{
+    max-width: 1200px;
+    width: 100%;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+/*.es-main > .table{*/
+    /*border-radius: 4px;*/
+    /*box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);*/
+    /*border: 1px solid #ebeef5;*/
+    /*transition: .3s;*/
+    /*margin-bottom: 20px;*/
+/*}*/
+.es-main > .table .to-form >div{
+    margin:initial;
+}
+.to-form .right_icon{
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.es-main > .table .hash >*{
+    display: inline-block;
+    vertical-align: bottom;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 120px;
+}
+.es-main > .info-overview-card{
+    margin-bottom: 20px;
+    margin-top: 40px;
+
+}
+.info-overview-card .item{
+    padding: 12px 0;
+    min-width: 0;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    position: relative;
+    font-size: 14px;
+}
+.info-overview-card .item .key{
+    width: 160px;
+    display: inline-block;
+    color: #999;
+}
+.info-overview-card .item .key:after{
+    content: ":";
+}
+.info-overview-card .item .value{
+
+}
+.info-overview-card .header{
+    font-size: 0;
+}
+.info-overview-card .header >*{
+    font-size: 20px;
+}
+.info-overview-card .header .key{
+    font-weight: 900;
+    color: #999;
+    width: 160px;
+    display: inline-block;
+    font-size: 20px;
+}
+
+.info-overview-card .header .value{
+    color: #2190cf;
+}
+.info-overview-card .item:nth-child(even){
+    background-color: #fafafa;
+}
+ul{
+    padding-left: initial;
+}
+li{
+    list-style: none;
+}
+
+.es-pagination{
+    text-align: right;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.es-link{
+    color: #409EFF;
+}
+
+.es-success{
+    color: #409EFF;
+}
+.es-fail{
+    color: red;
+}
+
+.amount:after{
+    content: ' (SS)';
+}
+/*样式覆盖 start*/
+
+/*样式覆盖 end*/
