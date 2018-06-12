@@ -39,7 +39,7 @@
 
                     <el-table-column  :label="this.$t('message.sharder_block_size')">
                         <template slot-scope="scope">
-                            {{scope.row.payloadLength}} (bytes)
+                            {{Number().FileSizeFormatStr(scope.row.payloadLength)}}
                         </template>
                     </el-table-column>
 
@@ -58,7 +58,9 @@
     </el-container>
 </template>
 <script>
-
+    import elHeader from 'components/header.vue'
+    import elFooter from 'components/footer.vue'
+    import search from 'components/search.vue'
 
     import axios from "axios";
     import api from '../../assets/api';
@@ -68,7 +70,7 @@
 
     export default {
         components: {
-            "el-pagination":pagination 
+            'el-header': elHeader, "el-footer": elFooter,"el-pagination":pagination ,"es-search":search
         },
 
         data() {
