@@ -157,9 +157,74 @@ Date.prototype.BlockDate = function (_timestamp) {
     return new Date(times).Format("yyyy-MM-dd hh:mm:ss");
 }
 
+/**
+ * 文件大小格式化  把数字太大的转换为 kb mb gb
+ * @param _size   单位是byte
+ * @constructor
+ * @return 返回的值不会加上单位字符串
+ */
+Number.prototype.FileSizeFormat = function(_size){
+        let j = fileSizeFormat(_size);
 
+        return j.number;
+}
+/**
+ * 文件大小格式化  把数字太大的转换为 kb mb gb
+ * @param _size   单位是byte
+ * @constructor
+ *
+ *@return  返回的值上会加上单位字符串
+ */
+Number.prototype.FileSizeFormatStr = function(_size){
+        let j = fileSizeFormat(_size);
+        let num = j.number;
+        let unit = j.unit;
+
+        return num + " ("+unit+")";
+}
+
+
+/**
+ * 1024 b = 1kb
+ * 1048576 b = 1mb
+ * 1073741824 b = 1gb
+ * @param _size
+ */
+function fileSizeFormat(_size){
+    var _json = new Object();
+    // b
+    if(_size < 1024){
+        _json.number = _size;
+        _json.unit = "byte";
+
+        return _json;
+    }
+    // kb
+    if(_size >=1024 && _size  < 1048576 ){
+        _json.number = (_size / 1024).toFixed(3);
+        _json.unit = "kb";
+
+        return _json;
+    // mb
+    }else if(_size < 1073741824){
+        _json.number = (_size / 1024 / 1024).toFixed(3);
+        _json.unit = "mb";
+        return _json;
+    //gb
+    }else {
+        _json.number = (_size / 1024 / 1024 / 1024).toFixed(3);
+        _json.unit = "gb";
+        return _json;
+    }
+
+}
+
+/**
+ * 金额格式转换  千进制
+ * @param _cent
+ * @returns {*}
+ */
 Number.prototype.amountFormat = function(_cent){
-
     // var oldYuan = (parseInt(_cent)/100).toString();
     var oldYuan = (parseInt(_cent)).toString();
 
