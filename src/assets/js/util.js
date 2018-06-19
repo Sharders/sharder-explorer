@@ -1,5 +1,5 @@
-// import axios from "axios";
-// import api from '../../assets/api';
+import axios from "axios";
+import api from '../../assets/api';
 const util = {
 
     //获取地址栏参数
@@ -118,17 +118,17 @@ const util = {
     isEmpty:function(params){
         return !this.isNotEmpty(params);
     },
-    // getServerConstant:function () {
-    //     axios.get(api.SERVER_CONSTANT,{withCredentials:true}).then(res=>{
-    //         this.setJsonLocalStorage("SERVER_CONSTANT",res.data);
-    //     }).catch(function (error) {
-    //         console.log(error);
-    //     })
-    // },
+    getServerConstant:function () {
+        axios.get(api.SERVER_CONSTANT,{withCredentials:true}).then(res=>{
+            this.setJsonLocalStorage("SERVER_CONSTANT",res.data);
+        }).catch(function (error) {
+            console.log(error);
+        })
+    },
 
 }
 //
-// util.getServerConstant();
+util.getServerConstant();
 export default util;
 
 Date.prototype.Format = function (fmt) {
@@ -149,7 +149,7 @@ Date.prototype.Format = function (fmt) {
 
 Date.prototype.BlockDate = function (_timestamp) {
     _timestamp *= 1000;
-    let times = 1471305600000;
+    let times = getRootTimestamp();
     times += _timestamp;
     if(isNaN(times)){
         times = 0;
@@ -157,6 +157,52 @@ Date.prototype.BlockDate = function (_timestamp) {
     return new Date(times).Format("yyyy-MM-dd hh:mm:ss");
 }
 
+function msTohhmmss(_timestamp){
+    var _json = new Object();
+    // let num = j.number;
+    // let unit = j.unit;
+    // 毫秒
+    if(_timestamp < 1000){
+        _json.number = _timestamp;
+        _json.unit = "Ms";
+        return _json;
+    }
+    // 秒
+    if(_timestamp >=1000 && _timestamp < 60000){
+        _json.number = (_timestamp / 1000);
+        _json.unit = "S";
+        return _json;
+    }
+
+    // 分
+    if(_timestamp >=60000 && _timestamp < 3600000){
+        _json.number = (_timestamp / 60000);
+        _json.unit = "Min";
+        return _json;
+    }else{
+        // 时
+        _json.number = (_timestamp / 3600000);
+        _json.unit = "H";
+        return _json;
+    }
+
+
+    if(_timestamp >=1000 && _timestamp < 60000){
+        _json.number = (_timestamp / 1000);
+        _json.unit = "S";
+        return _json;
+    }
+}
+Date.prototype.msTohhmmssStr = function (_timestamp){
+    if(_timestamp == null || _timestamp == ""){
+        return "";
+    }
+    _timestamp = parseInt(_timestamp);
+    if(_timestamp >= 3600000){
+        return new Date(_timestamp).Format("dd (h) mm (min)ss (s)");
+    }
+    return new Date(_timestamp).Format("mm (min)ss (s)");
+}
 /**
  * 文件大小格式化  把数字太大的转换为 kb mb gb
  * @param _size   单位是byte
@@ -192,6 +238,13 @@ Number.prototype.FileSizeFormatStr = function(_size){
  */
 function fileSizeFormat(_size){
     var _json = new Object();
+
+    if(_size == "" || _size == null){
+        _json.number = 0;
+        _json.unit = "byte";
+        return _json
+    }
+
     // b
     if(_size < 1024){
         _json.number = _size;
@@ -265,3 +318,12 @@ Number.prototype.amountFormat = function(_cent){
     }
 }
 
+function getRootTimestamp() {
+    let constant = util.getJsonLocalStorage("SERVER_CONSTANT");
+
+    if(constant != null && constant != ""){
+        return constant.epochBeginning;
+    }
+
+    return 1471305600000;
+}

@@ -67,6 +67,19 @@ const cn = {
         'sharder_warning':'警告',
         'sharder_not_data':'没有更多的数据了',
         'client_account':'客户账户',
+        'sharder_sharder_network':'豆匣网络',
+        'sharder_average_block':'平均区块',
+        'sharder_txn_volume_24':'24h转账交易量',
+        'sharder_data_storage_24':'24h数据存储',
+        'sharder_total_network_txn_volume':'全网转账交易量',
+        'sharder_total_data_storage_24':'全网数据存储',
+        'sharder_storage_amount':'存储数量',
+        'sharder_storage_size':'数据大小',
+        'sharder_txn_volume':'交易数量',
+        'sharder_txn_amount':'交易金额',
+        'sharder_txns':'笔',
+        'sharder_copies':'份'
+
     },
     ...zhLocale
 };

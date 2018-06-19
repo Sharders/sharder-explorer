@@ -73,6 +73,18 @@ const en = {
         'sharder_not_data':'More data unavailable',
         // 'client_account':'Customer Account',
         'client_account':'Customer Acct.',
+        'sharder_sharder_network':'Sharder Network',
+        'sharder_average_block':'Average Block',
+        'sharder_txn_volume_24':'24-hr Txn Volume',
+        'sharder_data_storage_24':'24-hr Data Storage',
+        'sharder_total_network_txn_volume':'Total Network Txn Volume',
+        'sharder_total_data_storage_24':'Total Network Data Storage',
+        'sharder_storage_amount':'Storage Amount',
+        'sharder_storage_size':'Storage Size',
+        'sharder_txn_volume':'Txn Volume',
+        'sharder_txn_amount':'Txn Amount',
+        'sharder_txns':'Txns',
+        'sharder_copies':'Copies'
     },
     ...enLocale
 };

@@ -14,6 +14,7 @@ const api={
     BLOCK_INFO:url("?requestType=getBizBlocks"),//获取区块信息（含交易详情）
     ACCOUNT_INFO:url("?requestType=getAccountInfo"),//获取指定账户信息
     TX:url("?requestType=getTx"), //获取指定交易数据
+    TX_STATISTICS:url("?requestType=getTxStatistics"), //获取统计数据
 
     methods:{
         getLastHeight:function (_callBack) {

@@ -11,6 +11,10 @@
                     </div>
                 </el-col>
             </el-row>
+
+            <statistical>
+
+            </statistical>
             <el-row class="es-main block-list-main">
                 <h2 class="main-title"><img src="https://apron-store.oss-cn-hangzhou.aliyuncs.com/sharder/img/block.png"/><span style="margin-left: 40px;">{{$t('message.sharder_block_list')}}</span>
                 </h2>
@@ -68,9 +72,11 @@
     import '../../assets/css/es.css';
     import pagination from 'components/pagination.vue'
 
+    import statistical11 from 'components/statistical_data.vue'
+
     export default {
         components: {
-            'el-header': elHeader, "el-footer": elFooter,"el-pagination":pagination ,"es-search":search
+            'el-header': elHeader, "el-footer": elFooter,"el-pagination":pagination ,"es-search":search,"statistical":statistical11
         },
 
         data() {
@@ -91,6 +97,8 @@
                         Util.storageBlocks(res.data);
                         if(firstIndex == 0){
                             this.totalNum = res.data[0].height;
+                            Util.setlocalStorage("prevBlockTime",this.prevBlockTime(res.data));
+                            Util.setlocalStorage("avgBlockTime",this.avgBlockTime(res.data));
                         }
 
                         this.loading = false;
@@ -102,6 +110,19 @@
             paging(firstIndex,lashIndex){
                 this.getTxInfo(firstIndex,lashIndex);
             },
+            prevBlockTime(data){
+
+               return (data[0].timestamp - data[1].timestamp) * 1000;
+
+            },
+            avgBlockTime(data){
+                let sum = 0;
+                for (let i=0;i<data.length -1;i++)
+                {
+                    sum += (data[i].timestamp - data[i+1].timestamp);
+                }
+                return ((sum / data.length) * 1000);
+            }
         },
         created() {
             this.getTxInfo(pagination.data().firstIndex,pagination.data().lastIndex);
