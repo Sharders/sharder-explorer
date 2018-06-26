@@ -35,12 +35,28 @@
                 <div class="text item"><span class="key">{{$t('message.sharder_transaction_amount')}}</span><span
                         class="value amount">{{Number().amountFormat(blockInfo.totalAmount)}}</span></div>
             </el-card>
-            <es-tx-list :transactions="blockInfo.transactions" class="table" v-if="showlist"></es-tx-list>
+            <es-tx-list :transactions="blockInfo.transactions" class="table block-table" v-if="showlist"></es-tx-list>
         </el-main>
         <el-footer>Footer</el-footer>
     </el-container>
 </template>
-
+<style scoped>
+    @media (max-width: 768px){
+        .es-main{
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+        .es-main > .info-overview-card{
+            margin-top: 0px;
+            border: initial;
+            box-shadow: initial;
+        }
+        .block-table{
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+</style>
 <script>
     import elHeader from 'components/header.vue'
     import elFooter from 'components/footer.vue'

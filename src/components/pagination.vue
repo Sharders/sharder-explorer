@@ -7,6 +7,13 @@
             @current-change="currentPageChange">
     </el-pagination>
 </template>
+<style>
+    @media (max-width: 768px){
+        .es-pagination .el-pager{
+            display: none;
+        }
+    }
+</style>
 <script>
     export default {
         name: "pagination",

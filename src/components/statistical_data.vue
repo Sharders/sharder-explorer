@@ -2,19 +2,19 @@
         <div>
             <el-row class=" es-main" >
 
-                <h2 class="main-title"><img src="https://apron-store.oss-cn-hangzhou.aliyuncs.com/sharder/img/network.png"><span style="margin-left: 40px;">豆匣网络</span></h2>
+                <h2 class="main-title"><img src="https://apron-store.oss-cn-hangzhou.aliyuncs.com/sharder/img/network.png"><span style="margin-left: 40px;">{{$t('message.sharder_sharder_network')}} </span></h2>
             </el-row>
 
             <el-row class="statistical-main es-main" >
-                <el-col :span="4">
+                <!--出块时间 start-->
+                <el-col :span="4"  :xs="11">
                     <el-card shadow="hover">
                         <div slot="header" class="clearfix">
-                            <span>{{$t('message.sharder_out_block_time')}}</span>
-
+                            <span>{{$t('message.sharder_block_time')}}</span>
                         </div>
                         <div class="details">
                             <div>
-                                <div class="t">{{$t('message.sharder_upper_block')}}</div>
+                                <div class="t">{{$t('message.sharder_last_block')}}</div>
                                 <div class="c">{{new Date().msTohhmmssStr(statistical.prevBlockTime) || 0}}</div>
                             </div>
                             <div>
@@ -24,7 +24,9 @@
                         </div>
                     </el-card>
                 </el-col>
-                <el-col :span="4">
+                <!--出块时间 end-->
+                <!--24h转账交易量 start-->
+                <el-col :span="4" :xs="11">
                     <el-card shadow="hover">
                         <div slot="header" class="clearfix">
                             <span>{{$t('message.sharder_txn_volume_24')}}</span>
@@ -41,7 +43,10 @@
                         </div>
                     </el-card>
                 </el-col>
-                <el-col :span="4">
+                <!--24h转账交易量 end-->
+
+                <!--24h数据存储 start-->
+                <el-col :span="4" :xs="11" class="hidden-xs-only">
                     <el-card shadow="hover">
                         <div slot="header" class="clearfix">
                             <span>{{$t('message.sharder_data_storage_24')}}</span>
@@ -58,14 +63,16 @@
                         </div>
                     </el-card>
                 </el-col>
-                <el-col :span="4">
+                <!--24h数据存储 end-->
+                <!--全网转账交易量 start-->
+                <el-col :span="4" :xs="11">
                     <el-card shadow="hover">
                         <div slot="header" class="clearfix">
                             <span>{{$t('message.sharder_total_network_txn_volume')}}</span>
                         </div>
                         <div class="details">
                             <div>
-                                <div class="t">{{$t('message.sharder_volume_transactions')}}</div>
+                                <div class="t">{{$t('message.sharder_txn_volume')}}</div>
                                 <div class="c">{{statistical.transferCount || 0}} {{$t('message.sharder_txns')}}</div>
                             </div>
                             <div>
@@ -75,23 +82,26 @@
                         </div>
                     </el-card>
                 </el-col>
-                <el-col :span="4">
+                <!--全网转账交易量 end-->
+                <!--全网数据存储 start-->
+                <el-col :span="4" :xs="11">
                     <el-card shadow="hover">
                         <div slot="header" class="clearfix">
                             <span>{{$t('message.sharder_total_data_storage_24')}}</span>
                         </div>
                         <div class="details">
-                            <div>
+                            <div class="l">
                                 <div class="t">{{$t('message.sharder_storage_amount')}}</div>
                                 <div class="c">{{statistical.storageCount || 0}} {{$t('message.sharder_copies')}}</div>
                             </div>
-                            <div>
+                            <div content="r">
                                 <div class="t">{{$t('message.sharder_storage_size')}}</div>
                                 <div class="c">{{Number().FileSizeFormatStr(statistical.storageDataLength) || 0}}</div>
                             </div>
                         </div>
                     </el-card>
                 </el-col>
+                <!--全网数据存储 end-->
             </el-row>
         </div>
 
@@ -145,13 +155,18 @@
         float: initial;
         display: inline-block;
     }
-    .statistical-main .el-col-4{
-        width: 19%;
+    @media (min-width: 768px){
+        .statistical-main .el-col-4{
+            width: 19%;
+        }
     }
+    /*.statistical-main .el-col-4{*/
+        /*width: 19%;*/
+    /*}*/
     .statistical-main .el-card{
 
     }
-    .statistical-main .el-card  .el-card__header{
+    .statistical-main .el-card .el-card__header{
         padding: 10.5px 20px;
         font-size: 14px;
         font-weight: bold;
@@ -172,8 +187,11 @@
         font-weight: bold;
         position: relative;
     }
+    .statistical-main .details >div{
+        width: 100%;
+    }
     .statistical-main .details .t{
-        font-size: 14px;
+        font-size: 12px;
     }
     .statistical-main .details .c{
         margin-top: 10px;
@@ -191,4 +209,13 @@
         position: absolute;
         left: 50%;
     }
+    @media (max-width: 768px){
+        .statistical-main .el-card .el-card__header{
+            font-size: 12px;
+            padding: 10.5px 10px;
+        }
+    }
+
+
+
 </style>

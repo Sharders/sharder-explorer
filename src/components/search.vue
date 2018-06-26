@@ -2,13 +2,20 @@
     <div class="es-search">
 
         <el-input class="input-search" :placeholder="$t('message.sharder_please_select')" v-model="searchText" @keyup.enter.native="search">
-            <el-select v-model="searchType" slot="prepend" :placeholder="$t('message.sharder_please_inquiry')" class="searchType">
+            <el-select  v-model="searchType" slot="prepend" :placeholder="$t('message.sharder_please_inquiry')" class="searchType">
                 <el-option :label="$t('message.sharder_block_height')" value="height"></el-option>
                 <el-option label="Hash" value="hash"></el-option>
                 <el-option :label="$t('message.sharder_trading_ID')" value="txId"></el-option>
                 <el-option :label="$t('message.sharder_account_address')" value="account_addr"></el-option>
             </el-select>
-            <el-button @click="search" id="es-search" slot="append" icon="el-icon-search"></el-button>
+            <i v-show="!searchTextIsEmpty()" slot="suffix" class="el-input__icon el-icon-circle-close-outline clone-search-text-btn" @click="searchText=''" ></i>
+
+            <!--移动端-->
+            <el-button v-if="isMobile()"  @click="searchMobile" class="es-search-btn" slot="append" :icon="searchTextIsEmpty() ?'el-icon-close' : 'el-icon-search'"></el-button>
+            <!--pc 端-->
+            <el-button v-else @click="search" class="es-search-btn" slot="append" icon="el-icon-search"></el-button>
+
+
         </el-input>
 
         <el-alert
@@ -35,9 +42,30 @@
             }
         },
         methods:{
+            searchTextIsEmpty(){
+                return Util.isEmpty(this.searchText);
+            },
+            isMobile(){
+                return Util.isMobile();
+            },
+            searchMobile(){
+                try {
+                    this.$emit('searchText', this.searchText);
+                } catch (e) {
+                    console.log(e);
+                }
+
+                if(this.searchTextIsEmpty()){
+                    return;
+                }
+
+                this.search();
+            },
             search(){
                 this.searchText = this.searchText.trim();
-                if(Util.isEmpty(this.searchText)){
+
+
+                if(this.searchTextIsEmpty()){
                     this.fail(this.$t('message.sharder_input_not_null'));
                     return;
                 }
@@ -132,6 +160,14 @@
                     that.verrorInfo = false;
                 },1500);
             }
+        },
+        watch:{
+            searchText(val, oldVal){
+
+                if(val == null || val == ''){
+
+                }
+            },
         }
     }
 </script>
@@ -156,16 +192,78 @@
         border-radius: 20px;
     }
 
-    .es-search input:focus {
-        border-color: transparent;
+    .es-search input:focus{
+        border-color: #e4e4e4;
     }
 
-    #es-search{
+    .es-search-btn{
         padding-left: 12px;
         padding-right: 12px;
     }
-
     .search-error-info{
         line-height: initial;
+        z-index: 9999;
     }
+    .clone-search-text-btn{
+        margin-right: 10px;
+    }
+
+
+    /*移动版的样式  手机屏幕小于 768px start*/
+    @media (max-width: 768px){
+        .input-search .el-input{
+            font-size: 12px;
+        }
+    }
+    /*移动版的样式  手机屏幕小于 768px end*/
+
+
+    /*非首页时使用此样式，在受首页需要写来覆盖*/
+    /*移动版的样式  手机屏幕小于 768px start*/
+    @media (max-width: 768px){
+        .clone-search-text-btn{
+            margin-right: 55px;
+            font-size: 20px;
+            line-height: 30px;
+        }
+        .es-search{
+            width: 100%;
+        }
+        .es-search{
+            position: fixed;
+            padding-left: 10px;
+            padding-right: 10px;
+            width: calc(100% - 20px);
+            left: 0;
+            background: #4078cd;
+            z-index: 9999;
+            top: 0;
+            height: 50px !important;
+            line-height: 46px !important;
+        }
+        .es-search input{
+            width: 95%;
+            margin-right: initial;
+        }
+        .input-search input[type=text]{
+            border-radius: 0 15px 15px 0;
+        }
+        .searchType input[type=text]{
+            width: 100px;
+            background-color: #fff;
+        }
+        .el-input-group__append{
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+        }
+        .input-search .el-input-group__prepend{
+            border-radius: 15px 0 0 15px;
+        }
+        .header-search .search-error-info{
+            position: relative;
+            top: 0px;
+        }
+
+    }
+    /*移动版的样式  手机屏幕小于 768px end*/
 </style>

@@ -6,6 +6,40 @@ const util = {
     /**
      * @return {string}
      */
+//     function IsPC() {
+//     var userAgentInfo = navigator.userAgent;
+//     var Agents = ["Android", "iPhone",
+//         "SymbianOS", "Windows Phone",
+//         "iPad", "iPod"];
+//     var flag = true;
+//     for (var v = 0; v < Agents.length; v++) {
+//         if (userAgentInfo.indexOf(Agents[v]) > 0) {
+//             flag = false;
+//             break;
+//         }
+//     }
+//     return flag;
+// }
+
+    isPC:function(){
+        let sUserAgent = navigator.userAgent.toLowerCase();
+        let bIsIpad = sUserAgent.match(/ipad/i) == "ipad";
+        let bIsIphoneOs = sUserAgent.match(/iphone os/i) == "iphone os";
+        let bIsMidp = sUserAgent.match(/midp/i) == "midp";
+        let bIsUc7 = sUserAgent.match(/rv:1.2.3.4/i) == "rv:1.2.3.4";
+        let bIsUc = sUserAgent.match(/ucweb/i) == "ucweb";
+        let bIsAndroid = sUserAgent.match(/android/i) == "android";
+        let bIsCE = sUserAgent.match(/windows ce/i) == "windows ce";
+        let bIsWM = sUserAgent.match(/windows mobile/i) == "windows mobile";
+        if (!(bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM) ){
+           return true;
+        } else {
+            return false;
+        }
+    },
+    isMobile(){
+      return !this.isPC();
+    },
     GetUrlParam : function (name){
         let reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
         let r = window.location.search.substr(1).match(reg);
@@ -77,12 +111,10 @@ const util = {
     storageBlocks:function (_blocks) {
         for (let i=0;i<_blocks.length;i++)
         {
-            console.log("存储一组区块");
             this.setJsonLocalStorage(_blocks[i].height,_blocks[i]);
         }
     },
     storageBlock:function(_blocks){
-        console.log("存储一个区块");
         this.setJsonLocalStorage(_blocks.height,_blocks);
     },
     getBlockInfoById:function (_height) {
@@ -159,8 +191,7 @@ Date.prototype.BlockDate = function (_timestamp) {
 
 function msTohhmmss(_timestamp){
     var _json = new Object();
-    // let num = j.number;
-    // let unit = j.unit;
+
     // 毫秒
     if(_timestamp < 1000){
         _json.number = _timestamp;

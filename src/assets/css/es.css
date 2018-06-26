@@ -60,9 +60,10 @@ body, html{
     display: inline-block;
     color: #999;
 }
-.info-overview-card .item .key:after{
+.info-overview-card .item .key:after,.maohao:after{
     content: ":";
 }
+
 .info-overview-card .item .value{
 
 }
@@ -116,3 +117,41 @@ li{
 /*样式覆盖 start*/
 
 /*样式覆盖 end*/
+
+
+
+
+
+/*移动版的样式  手机屏幕小于 768px start*/
+@media (max-width: 768px){
+    .info-overview-card .header .key{
+        color: #333;
+    }
+    .info-overview-card .header .value{
+        font-size: 18px;
+    }
+    .es-main > .table .hash >*{
+        width: 60px;
+    }
+    .info-overview-card .item .key{
+        font-size: 12px;
+        width: 28%;
+    }
+    .info-overview-card .item .value{
+        font-size: 12px;
+        width: 70%;
+        display: inline-block;
+        word-wrap: break-word;
+        word-break: break-word;
+    }
+    .es-main{
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /*分页样式*/
+    .es-pagination{
+        text-align: center;
+    }
+}
+/*移动版的样式  手机屏幕小于 768px end*/

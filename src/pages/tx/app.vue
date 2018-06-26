@@ -97,6 +97,19 @@
     </el-container>
 </template>
 
+<style scoped>
+    @media (max-width: 768px){
+        .es-main{
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+        .es-main > .info-overview-card{
+          margin-top: 0px;
+          border: initial;
+          box-shadow: initial;
+        }
+    }
+</style>
 <script>
     import axios from "axios";
     import elHeader from 'components/header.vue'

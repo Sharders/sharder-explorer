@@ -78,7 +78,10 @@ const cn = {
         'sharder_txn_volume':'交易数量',
         'sharder_txn_amount':'交易金额',
         'sharder_txns':'笔',
-        'sharder_copies':'份'
+        'sharder_copies':'份',
+        'sharder_last_block':'上一区块',
+        'sharder_block_time':'出块时间'
+
 
     },
     ...zhLocale

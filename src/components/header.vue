@@ -11,9 +11,11 @@
                 </a>
 
                 <span class="alpha">Alpha</span>
-                <!--<span ><a href="/" class="title"><img :src="logoImg" class="nav-logo"/>{{$t('message.sharder_block_browser')}}</a></span>-->
             </div>
-            <es-search class="header-search"></es-search>
+            <es-search class="header-search" :class="{ show_mobile_search_block: show_mobile_search }" @searchText="searchText"></es-search>
+
+            <el-button @click="show_mobile_search=true" class="show-mobile-search hidden-sm-and-up"  icon="el-icon-search" circle></el-button>
+
             <el-dropdown class="nav-dropdown nav-lang el-dropdown" trigger="click"  @command="changeLang">
             <span  class="el-dropdown-link" role="button">
                 {{$t('message.sharder_language')}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -34,12 +36,14 @@
 
     export default {
         name: "es-header",
+
         components: {
             'es-search': search
         },
 
         data(){
             return {
+                show_mobile_search:false,
                 logoImg: logo,
             }
         },
@@ -49,6 +53,11 @@
                 Util.setlang(_select);
                 console.info("语言切换成:" + this.$i18n.locale);
             },
+            searchText(_data){
+                if(_data == null || _data == ''){
+                    this.show_mobile_search = false;
+                }
+            }
         }
     }
 </script>
@@ -91,9 +100,38 @@
         height: 80px;
         line-height: 80px;
     }
+
+    /*移动版的样式  手机屏幕小于 768px start*/
+    @media (max-width: 768px){
+        .nav-lang{
+            height: 50px;
+            line-height: 50px;
+            display: none;
+        }
+        .es-header{
+            height: 50px !important;
+        }
+        .header-logo .nav-logo{
+            margin-top: initial;
+        }
+        .es-header .title{
+            height: 40px;
+            margin-top: 6px;
+        }
+
+        /* TODO 下面这段css 比较糟糕，日后再来重构*/
+        .es-header-main{
+            position: initial;
+        }
+        .alpha{
+            left: 130px;
+        }
+    }
+    /*移动版的样式  手机屏幕小于 768px end*/
 </style>
 
 <style>
+
     .header-logo .t{
         display: inline-block;
         margin-top: 19px;
@@ -147,5 +185,50 @@
         color: #ddd;
         font-style: italic;
         height: 16px;
+    }
+
+
+
+    /*移动版的样式  手机屏幕小于 768px start*/
+    @media (max-width: 768px){
+        .header-search  .el-input input {
+            height: 30px;
+        }
+        .show-mobile-search{
+            position: absolute;
+            right: 15px;
+            top: 5px;
+        }
+
+        .header-logo .t .t-m{
+            font-size: 18px;
+        }
+        .header-logo .t{
+            margin-top: initial;
+        }
+        .header-logo .nav-logo{
+            width: 30px;
+        }
+        .header-logo .t .t-d{
+
+        }
+        .alpha{
+            top: 11px;
+            left: 110px;
+        }
+
+        .header-search{
+            display: none !important;
+            margin-left: initial;
+        }
+        .show_mobile_search_block{
+            display: inline-block !important;
+        }
+    }
+    /*移动版的样式  手机屏幕小于 768px end*/
+
+
+    .show_mobile_search_block{
+        display: inline-block !important;
     }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <el-footer class="es-footer">
+    <el-footer class="es-footer hidden-xs-only">
         <ul class="es-main">
             <li class="font-icon">
                 <a href="https://twitter.com/SharderChain" target="_blank"><span><i class="fa fa-twitter"></i></span></a>

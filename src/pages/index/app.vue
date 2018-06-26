@@ -7,18 +7,26 @@
                     <div class="content">
                         <h1 class="s-title">{{$t('message.sharder_block_browser')}}</h1>
                         <p class="s-info">{{$t('message.sharder_block_check_details')}}</p>
-                        <es-search></es-search>
+
+                        <div class="hidden-xs-only">
+                            <es-search></es-search>
+                        </div>
+
                     </div>
                 </el-col>
             </el-row>
 
-            <statistical>
-
-            </statistical>
+            <el-row class="search-mobile-index hidden-sm-and-up">
+                <es-search></es-search>
+            </el-row>
+            <!--豆匣网络数据统计模板-->
+            <statistical></statistical>
             <el-row class="es-main block-list-main">
                 <h2 class="main-title"><img src="https://apron-store.oss-cn-hangzhou.aliyuncs.com/sharder/img/block.png"/><span style="margin-left: 40px;">{{$t('message.sharder_block_list')}}</span>
                 </h2>
-                <el-table :data="blockInfo" style="width: 100%" class="table" v-loading="loading">
+
+                <!--首页区块列表table  pc-->
+                <el-table :data="blockInfo" style="width: 100%" class="table hidden-xs-only" v-loading="loading">
 
                     <el-table-column  :label="this.$t('message.sharder_block_height')">
                         <template slot-scope="scope">
@@ -28,10 +36,8 @@
                         </template>
                     </el-table-column>
 
-
                     <el-table-column prop="blockId" :label="this.$t('message.sharder_block_hash')"
                                      ></el-table-column>
-
                     <el-table-column :label="$t('message.sharder_time')">
                         <template slot-scope="scope">
                             {{new Date().BlockDate(scope.row.timestamp)}}
@@ -55,7 +61,29 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-pagination @pagingParams="paging" :totalNum="totalNum"></el-pagination>
+
+                <!--首页区块列表table  移动-->
+                <div>
+                    <el-col :span="24" class="block-item-mobile hidden-sm-and-up" v-for="block in blockInfo">
+                        <el-card  class="box-card item" shadow="hover">
+                            <!--区块高度-->
+                            <div>
+                                <span class="maohao">{{$t('message.sharder_block_height')}}</span>
+                                <span>
+                                <a class="es-link" :href="'block.html?height='+block.height">{{block.height}}</a>
+                            </span>
+                            </div>
+                            <!--出块时间-->
+                            <div >
+                                <span class="maohao">{{$t('message.sharder_time')}}</span>
+                                <span>{{new Date().BlockDate(block.timestamp)}}</span>
+                            </div>
+                        </el-card>
+                    </el-col>
+                </div>
+            </el-row>
+            <el-row  class="es-main">
+                    <el-pagination  @pagingParams="paging" :totalNum="totalNum"></el-pagination>
             </el-row>
         </el-main>
         <el-footer>Footer</el-footer>
@@ -185,4 +213,95 @@
     .es-header{
         border-bottom: 1px solid #fff3;
     }
+
+
+    /*移动版的样式  手机屏幕小于 768px start*/
+    @media (max-width: 768px){
+        .show-mobile-search{
+            display: none;
+        }
+        .nav-lang{
+            display: block !important;
+        }
+        .main-title{
+            margin-top: 15px !important;
+            margin-bottom: 10px !important;
+        }
+        .index-head{
+            background: url("https://apron-store.oss-cn-hangzhou.aliyuncs.com/sharder/img/mobile/banner@2x.png") no-repeat;
+            background-size: 100%;
+            height: 150px;
+        }
+        .index-head .content{
+            margin-top: 40px;
+        }
+        .index-head .content .s-title{
+            font-size: 21px;
+            margin: initial;
+        }
+        .index-head .s-info{
+            font-size: 12px;
+            margin: initial;
+        }
+        .index-head .es-main{
+            background-image: none;
+        }
+        .search-mobile-index .es-search input{
+            width: 100%;
+             margin-right: initial;
+        }
+        .searchType input[type=text]{
+            width: 100px;
+            background-color: #fff;
+        }
+
+        .search-mobile-index{
+            padding-left: 10px;
+            padding-right: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .search-mobile-index .es-search{
+            display: inline-block !important;
+
+            position: initial;
+            padding-left:initial;
+            padding-right: initial;
+            width: initial;
+            left: initial;
+            background: initial;
+            z-index: initial;
+            top: initial;
+            height: initial;
+            line-height: initial;
+        }
+        .search-mobile-index .es-search-btn .el-icon-close:before{
+            content: "\E619";
+        }
+        .clone-search-text-btn{
+            margin-right: initial;
+        }
+        .input-search .el-input-group__prepend{
+            border-radius: initial;
+        }
+        .input-search input[type=text]{
+            border-radius: initial;
+        }
+        .input-search .el-input-group__append{
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .block-item-mobile {
+            margin-bottom: 5px;
+        }
+        .block-item-mobile .item .el-card__body{
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            padding: 10px;
+        }
+    }
+
+
+    /*移动版的样式  手机屏幕小于 768px end*/
 </style>
