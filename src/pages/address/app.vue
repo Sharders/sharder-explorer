@@ -57,7 +57,6 @@
         },
         methods: {
             isPc(){
-                console.log(Util.isPC()+"======================");
                 return Util.isPC();
             },
             getTxInfo() {

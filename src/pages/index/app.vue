@@ -5,7 +5,9 @@
             <el-row class="index-head">
                 <el-col class="es-main">
                     <div class="content">
-                        <h1 class="s-title">{{$t('message.sharder_block_browser')}}</h1>
+                        <h1 class="s-title" v-if="isPc()">{{$t('message.sharder_block_browser')}}</h1>
+                        <h1 class="s-title" v-else>{{$t('message.sharder_block_browser_mobile')}}</h1>
+
                         <p class="s-info">{{$t('message.sharder_block_check_details')}}</p>
 
                         <div class="hidden-xs-only">
@@ -28,7 +30,7 @@
                 <!--首页区块列表table  pc-->
                 <el-table :data="blockInfo" style="width: 100%" class="table hidden-xs-only" v-loading="loading">
 
-                    <el-table-column  :label="this.$t('message.sharder_block_height')">
+                    <el-table-column  :label="this.$t('message.sharder_block_height')" width="120px">
                         <template slot-scope="scope">
                             <a class="es-link" :href="'block.html?height='+scope.row.height">
                                {{scope.row.height}}
@@ -47,13 +49,23 @@
                     <el-table-column width="250px" prop="generatorRS" :label="this.$t('message.sharder_piece')"></el-table-column>
 
 
-                    <el-table-column  :label="this.$t('message.sharder_block_size')">
+                    <el-table-column  :label="this.$t('message.sharder_block_size')" width="100px">
                         <template slot-scope="scope">
                             {{Number().FileSizeFormatStr(scope.row.payloadLength)}}
                         </template>
                     </el-table-column>
 
-                    <el-table-column  :label="this.$t('message.sharder_operation')">
+                    <el-table-column  :label="this.$t('message.sharder_trading_type')" width="140px">
+                        <template slot-scope="scope">
+                            <span v-for="type in scope.row.types" class="tx_type_tag">
+                                <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
+
+                                <el-tag size="mini" v-if="type == '6'" type="success">{{$t('message.sharder_storage')}}</el-tag>
+                            </span>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column  :label="this.$t('message.sharder_operation')" width="80px">
                         <template slot-scope="scope">
                             <a :href="'block.html?height='+scope.row.height">
                                 <el-button type="text" size="small">{{$t('message.sharder_check_details')}}</el-button>
@@ -64,22 +76,41 @@
 
                 <!--首页区块列表table  移动-->
                 <div>
-                    <el-col :span="24" class="block-item-mobile hidden-sm-and-up" v-for="block in blockInfo">
-                        <el-card  class="box-card item" shadow="hover">
-                            <!--区块高度-->
-                            <div>
-                                <span class="maohao">{{$t('message.sharder_block_height')}}</span>
-                                <span>
-                                <a class="es-link" :href="'block.html?height='+block.height">{{block.height}}</a>
+
+                    <el-table :data="blockInfo" style="width: 100%" class="table hidden-sm-and-up block-table-mobile" v-loading="loading">
+
+                        <el-table-column  :label="this.$t('message.sharder_block_height_mobile')" width="60px">
+                            <template slot-scope="scope">
+                                <a class="es-link" :href="'block.html?height='+scope.row.height">
+                                    {{scope.row.height}}
+                                </a>
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column :label="$t('message.sharder_block_time')">
+                            <template slot-scope="scope">
+                                {{new Date().BlockDate(scope.row.timestamp)}}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column  :label="this.$t('message.sharder_block_size')">
+                            <template slot-scope="scope">
+                                {{Number().FileSizeFormatStr(scope.row.payloadLength)}}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column  :label="this.$t('message.sharder_trading_type')" >
+                            <template slot-scope="scope">
+                            <span v-for="type in scope.row.types" >
+                                <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
+
+                                <el-tag size="mini" v-if="type == '6'" type="success">{{$t('message.sharder_storage')}}</el-tag>
                             </span>
-                            </div>
-                            <!--出块时间-->
-                            <div >
-                                <span class="maohao">{{$t('message.sharder_time')}}</span>
-                                <span>{{new Date().BlockDate(block.timestamp)}}</span>
-                            </div>
-                        </el-card>
-                    </el-col>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+
                 </div>
             </el-row>
             <el-row  class="es-main">
@@ -116,12 +147,16 @@
             }
         },
         methods: {
+            isPc(){
+                return Util.isPC();
+            },
             getTxInfo(firstIndex,lashIndex) {
                 axios.get(api.BLOCK_INFO +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex, {withCredentials: true})
                     .then(res => {
                         this.blockInfo = res.data;
 
-                        console.log(this.blockInfo);
+                        this.handleBlockIncludeOfOrderType(this.blockInfo);
+
                         Util.storageBlocks(res.data);
                         if(firstIndex == 0){
                             this.totalNum = res.data[0].height;
@@ -150,6 +185,27 @@
                     sum += (data[i].timestamp - data[i+1].timestamp);
                 }
                 return ((sum / data.length) * 1000);
+            },
+            handleBlockIncludeOfOrderType(_data){
+
+
+
+                for (let i = 0; i < _data.length; i++) {
+
+                    let transac = _data[i].transactions;
+                    let IncludeOfType = new Array();
+
+                    for (let k = 0; k < transac.length; k++) {
+                        if(IncludeOfType.indexOf(transac[k].type) < 0){
+                            IncludeOfType.push(transac[k].type);
+                        }
+                    }
+
+                    _data[i].types  = IncludeOfType;
+                }
+
+
+
             }
         },
         created() {
@@ -214,6 +270,10 @@
         border-bottom: 1px solid #fff3;
     }
 
+    .tx_type_tag{
+        margin-left: 2px;
+        margin-right: 2px;
+    }
 
     /*移动版的样式  手机屏幕小于 768px start*/
     @media (max-width: 768px){
@@ -299,6 +359,9 @@
             justify-content: space-between;
             font-size: 14px;
             padding: 10px;
+        }
+        .block-table-mobile{
+            font-size: 12px;
         }
     }
 

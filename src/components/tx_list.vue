@@ -194,7 +194,7 @@
                 </template>
             </el-table-column>
             <!--创建时间-->
-            <el-table-column :label="$t('message.sharder_creation_time')" width="100">
+            <el-table-column :label="$t('message.sharder_creation_time')" width="90">
                 <template slot-scope="scope">
                     {{new Date().BlockDate(scope.row.timestamp)}}
                 </template>
@@ -212,7 +212,7 @@
             </el-table-column>
         </el-table>
         <!--存储-->
-        <el-table  :data="transactionsData" class="table hidden-sm-and-up table-lists" v-show="selectedType === 'cc'">
+        <el-table  :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'cc'">
             <!--折叠信息块-->
             <el-table-column type="expand" width="40">
                 <template slot-scope="props" >
@@ -251,7 +251,7 @@
                 </template>
             </el-table-column>
             <!--存储hash-->
-            <el-table-column prop="hash" :label="$t('message.sharder_store_hash')" width="90">
+            <el-table-column prop="hash" :label="$t('message.sharder_hash')" width="90">
                 <template slot-scope="scope">
                     <a class="hash " :href="'/tx.html?hash='+scope.row.hash">
                         <el-button type="text" size="small"><span class="simpl-hash">{{scope.row.hash}}</span></el-button>
@@ -261,7 +261,7 @@
 
 
             <!--创建时间-->
-            <el-table-column :label="$t('message.sharder_creation_time')" width="100">
+            <el-table-column :label="$t('message.sharder_creation_time')" width="90">
                 <template slot-scope="scope">
                     {{new Date().BlockDate(scope.row.timestamp)}}
                 </template>
@@ -295,6 +295,7 @@
             border-radius: initial !important;
             box-shadow:initial !important;
             border: initial !important;
+            font-size: 12px;
         }
         .table-lists .simpl-hash{
             display: inline-block;

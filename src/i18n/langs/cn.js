@@ -4,8 +4,10 @@ const cn = {
     message: {
         'sharder': '豆匣',
         'sharder_block_browser': '豆匣区块浏览器',
+        'sharder_block_browser_mobile': '豆匣区块浏览器',
         'sharder_language': '语言',
         'sharder_block_height': '区块高度',
+        'sharder_block_height_mobile': '高度',
         'sharder_block_hash': '区块ID',
         'sharder_time': '时间',
         'sharder_piece': '出块者',
@@ -80,7 +82,8 @@ const cn = {
         'sharder_txns':'笔',
         'sharder_copies':'份',
         'sharder_last_block':'上一区块',
-        'sharder_block_time':'出块时间'
+        'sharder_block_time':'出块时间',
+        'sharder_hash':'Hash'
 
 
     },
