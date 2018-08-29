@@ -58,6 +58,7 @@ const cn = {
         'sharder_backup_number': '备份数',
         'sharder_backup_effective_block': '备份有效区块',
         'sharder_copies': '份',
+        'sharder_block': '块',
         'sharder_check': '查看',
         'sharder_backup_address': '备份地址',
         'sharder_backup_detail': '备份详情',
