@@ -3,7 +3,6 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const cn = {
 
     message: {
-
         'sharder': '豆匣',
         'sharder_block_browser': '豆匣区块浏览器',
         'sharder_block_browser_mobile': '豆匣区块浏览器',
