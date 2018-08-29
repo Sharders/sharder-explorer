@@ -25,6 +25,15 @@
                     <el-dropdown-item command="en">English</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
+            <el-dropdown class="nav-dropdown nav-lang el-dropdown network" trigger="click"  @command="changeNetWork">
+            <span  class="el-dropdown-link" role="button">
+                {{$t('message.sharder_select_network')}}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+                <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item command="alpha">Alpha</el-dropdown-item>
+                    <el-dropdown-item command="beta">Beta</el-dropdown-item>
+                </el-dropdown-menu>
+            </el-dropdown>
         </div>
     </el-header>
 </template>
@@ -53,6 +62,9 @@
                 Util.setlang(_select);
                 console.info("语言切换成:" + this.$i18n.locale);
             },
+            changeNetWork(_select){
+                console.log(_select)
+            },
             searchText(_data){
                 if(_data == null || _data == ''){
                     this.show_mobile_search = false;
@@ -63,6 +75,10 @@
 </script>
 
 <style scoped>
+
+    .network{
+        margin-right: 30px;
+    }
 
     .es-header{
         background-color: #4078cd;
@@ -103,10 +119,14 @@
 
     /*移动版的样式  手机屏幕小于 768px start*/
     @media (max-width: 768px){
+        .network{
+            margin-right: 15px;
+        }
         .nav-lang{
             height: 50px;
             line-height: 50px;
             display: none;
+            font-size: small;
         }
         .es-header{
             height: 50px !important;

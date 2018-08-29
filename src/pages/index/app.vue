@@ -48,14 +48,13 @@
 
                     <el-table-column width="250px" prop="generatorRS" :label="this.$t('message.sharder_piece')"></el-table-column>
 
-
-                    <el-table-column  :label="this.$t('message.sharder_block_size')" width="100px">
+                    <el-table-column :label="this.$t('message.sharder_block_size')" width="100px">
                         <template slot-scope="scope">
                             {{Number().FileSizeFormatStr(scope.row.payloadLength)}}
                         </template>
                     </el-table-column>
 
-                    <el-table-column  :label="this.$t('message.sharder_trading_type')" width="140px">
+                    <el-table-column width="140px" :label="this.$t('message.sharder_trading_type')" :render-header="PCRenderHeader">
                         <template slot-scope="scope">
                             <span v-for="type in scope.row.types" class="tx_type_tag">
                                 <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
@@ -64,7 +63,6 @@
                             </span>
                         </template>
                     </el-table-column>
-
                     <el-table-column  :label="this.$t('message.sharder_operation')" width="80px">
                         <template slot-scope="scope">
                             <a :href="'block.html?height='+scope.row.height">
@@ -99,7 +97,7 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column  :label="this.$t('message.sharder_trading_type')" >
+                        <el-table-column  :render-header="MORenderHeader">
                             <template slot-scope="scope">
                             <span v-for="type in scope.row.types" >
                                 <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
@@ -142,36 +140,143 @@
             return {
                 totalNum:0,
                 blockInfo: [{}],
+                tradingType:"",
                 searchText:'',
-                loading: true
+                loading: true,
+                firstNum:0,
+                lastNum:0,
+                type:"",
             }
         },
         methods: {
+
+            PCRenderHeader(h,para) {
+                var _this = this;
+                return (
+                    h('span',[
+                        h('el-select',{
+                            attrs: {
+                                placeholder:this.$t('message.sharder_trading_type'),
+                                size:"mini",
+                            },
+                            "class":{
+                                "tx-type-PC":true
+                            },
+                            on:{
+                                change:function (type) {
+                                    _this.type = type;
+                                    /*var index = _this.lastNum;
+                                    console.log(index)
+                                    if (type === '6') {  //取100条以内为存储类型的记录
+                                        _this.getTxInfo(_this.firstNum,_this.lastNum + 100,type)//数据拉取条数上限为100
+                                        _this.lastNum = index;
+                                    }else{
+                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type)
+                                    }*/
+                                    _this.loading = true;
+                                    _this.getTxInfo(_this.firstNum,_this.lastNum,type);
+                                }
+                            },
+                        },[
+                            h('el-option',{
+                                attrs: {   //可以用props:{value:"xxx"}直接将值设置到组件当中
+                                    label:this.$t('message.sharder_all'),
+                                    value: ""
+                                }
+                            }),
+                            h('el-option',{
+                                attrs: {
+                                    label:this.$t('message.sharder_transfer'),
+                                    value: "0"
+                                }
+                            }),
+                            h('el-option',{
+                                attrs: {
+                                    label:this.$t('message.sharder_storage'),
+                                    value: "6"
+                                }
+                            })
+                        ]),
+
+                    ],'')
+                )
+            },
+            MORenderHeader(h,para) {
+                var _this = this;
+                return (
+                    h('span',[
+                        h('el-select',{
+                            attrs: {
+                                placeholder:this.$t('message.sharder_trading_type'),
+                                size:"mini",
+                            },
+                            "class":{
+                                "tx-type-MO":true
+                            },
+                            on:{
+                                change:function (type) {
+                                    _this.type = type;
+                                    _this.loading = true;
+                                    _this.getTxInfo(_this.firstNum,_this.lastNum,type)
+                                }
+                            },
+                        },[
+                            h('el-option',{
+                                attrs: {
+                                    label:this.$t('message.sharder_all'),
+                                    value: ""
+                                }
+                            }),
+                            h('el-option',{
+                                attrs: {
+                                    label:this.$t('message.sharder_transfer'),
+                                    value: "0"
+                                }
+                            }),
+                            h('el-option',{
+                                attrs: {
+                                    label:this.$t('message.sharder_storage'),
+                                    value: "6"
+                                }
+                            })
+                        ]),
+
+                    ],'')
+                )
+            },
             isPc(){
                 return Util.isPC();
             },
-            getTxInfo(firstIndex,lashIndex) {
-                axios.get(api.BLOCK_INFO +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex, {withCredentials: true})
+            getTxInfo(firstIndex,lashIndex,type) {
+                this.firstNum = firstIndex;
+                this.lastNum = lashIndex;
+                var includeTypes = "";
+                if (type !== undefined && type !== ""){
+                    includeTypes = "&includeTypes=" + type;
+                }
+                let _this = this;
+                axios.get(api.BLOCK_INFO +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex + includeTypes, {withCredentials: true})
                     .then(res => {
-                        this.blockInfo = res.data;
+                        _this.loading = false;
+                            if(res.data !== null && res.data.length !==0){
+                                this.blockInfo = res.data;
+                                this.handleBlockIncludeOfOrderType(this.blockInfo);
 
-                        this.handleBlockIncludeOfOrderType(this.blockInfo);
-
-                        Util.storageBlocks(res.data);
-                        if(firstIndex == 0){
-                            this.totalNum = res.data[0].height;
-                            Util.setlocalStorage("prevBlockTime",this.prevBlockTime(res.data));
-                            Util.setlocalStorage("avgBlockTime",this.avgBlockTime(res.data));
-                        }
-
-                        this.loading = false;
-                    })
-                    .catch(function (error) {
+                                Util.storageBlocks(res.data);
+                                if (res.data.length !==0 && firstIndex === 0) {
+                                    this.totalNum = res.data[0].height;
+                                    Util.setlocalStorage("prevBlockTime", this.prevBlockTime(res.data));
+                                    Util.setlocalStorage("avgBlockTime", this.avgBlockTime(res.data));
+                                }
+                            }
+                    }).catch(function (error) {
+                        _this.loading = false;
                         console.log(error);
                     });
             },
             paging(firstIndex,lashIndex){
-                this.getTxInfo(firstIndex,lashIndex);
+                this.loading = true;
+                this.getTxInfo(firstIndex,lashIndex,this.type);
             },
             prevBlockTime(data){
 
@@ -215,6 +320,16 @@
 </script>
 
 <style lang="postcss">
+
+    .tx-type-PC{
+        width: 140px;
+        margin-left: -25px;
+    }
+    .tx-type-MO{
+        width: 135px;
+        margin-left: -30px;
+    }
+
 
     .es-main > .table {
         border-radius: initial;

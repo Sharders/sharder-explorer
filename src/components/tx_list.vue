@@ -84,6 +84,12 @@
                     <el-form label-position="left" inline class="to-form">
                         <el-form-item :label="$t('message.sharder_store')" class="form">
                             <a :href="'/address.html?addr='+props.row.sender" class="es-link"><span>{{ props.row.sender }}</span></a>
+                        </el-form-item><br/>
+                        <el-form-item :label="$t('message.sharder_backup_number')" class="form">
+                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ 0 }}{{$t('message.sharder_copies')}}</span></a>
+                        </el-form-item><br/>
+                        <el-form-item :label="$t('message.sharder_backup_effective_block')" class="form">
+                            <span>{{ 0 }}{{$t('message.sharder_block')}}</span>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -224,7 +230,7 @@
                             </span>
                         </el-form-item>
                         <!--客户地址-->
-                        <el-form-item class="item"  :label="$t('message.client_account')">
+                        <el-form-item class="item" label-width="120" :label="$t('message.client_account')">
                             <span v-if="props.row.data != null && props.row.data != ''">
                                 <a :href="'/address.html?addr='+props.row.data.clientAccount" class="es-link">{{props.row.data.clientAccount || ''}}</a>
                             </span>
@@ -233,6 +239,15 @@
                         <!--存储ID-->
                         <el-form-item class="item"  :label="$t('message.sharder_store_id')" >
                             <span>{{props.row.transactionId}}</span>
+                        </el-form-item>
+
+                        <!--备份数-->
+                        <el-form-item class="item" :label="$t('message.sharder_backup_number')" >
+                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ 0 }}{{$t('message.sharder_copies')}}</span></a>
+                        </el-form-item>
+
+                        <el-form-item class="item" :label="$t('message.sharder_backup_effective_block')">
+                            <span>{{ 0 }}{{$t('message.sharder_block')}}</span>
                         </el-form-item>
 
                         <!--文件名称-->
@@ -321,13 +336,13 @@
             border-bottom: 1px solid #f2f2f2;
         }
         .to-form .item label{
-            width: 30%;
+            width: 45%;
         }
         .to-form .item label:after{
             content: ":";
         }
         .to-form .item .el-form-item__content{
-            width: 70%;
+            width: 55%;
         }
         .block-table .cell{
             line-height: 14px;
@@ -375,6 +390,8 @@
         props:['transactions','address'],
         methods: {
             filterType() {
+                console.log(this.transactions)
+                console.log(this.selectedType)
                 let value = "";
                 if(this.selectedType === "zz"){
                     value = 0;

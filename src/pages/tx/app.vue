@@ -79,6 +79,20 @@
                     <span class="key">{{$t('message.sharder_service_charge')}}</span>
                     <span class="value amount">{{Number().amountFormat(transactions.fee)}}</span>
                 </div>
+                <!--备份数-->
+                <div class="text item">
+                    <span class="key">{{$t('message.sharder_backup_number')}}</span>
+                    <span class="value">{{ 0 }}{{$t('message.sharder_copies')}}
+                        <a class="see" v-if="isPC" @click="dialogPCTableVisible = true">{{$t('message.sharder_check')}}</a>
+                        <a class="see" v-else @click="dialogMoTableVisible = true">{{$t('message.sharder_check')}}</a>
+                    </span>
+                </div>
+                <!--有效区块-->
+                <div class="text item">
+                    <span class="key">{{$t('message.sharder_backup_effective_block')}}</span>
+                    <span class="value" v-if="this.$i18n.locale === 'cn'">第{{ 0 }}</span>
+                    <span class="value" v-else-if="this.$i18n.locale === 'en'">{{ 0 }}th</span>
+                </div>
                 <!--交易状态及确认数-->
                 <div class="text item">
                     <span class="key">{{$t('message.sharder_confirmation_state')}}</span>
@@ -93,20 +107,83 @@
                 </div>
             </el-card>
         </el-main>
+        <!--PC端弹出窗-->
+        <el-dialog width="800px" :title="$t('message.sharder_backup_address')" :visible.sync="dialogPCTableVisible" >
+            <el-table :data="tableData">
+                <el-table-column  :label="$t('message.sharder_backup_address')" width="338">
+                    <template scope="scope">
+                        <a :href="'/address.html?addr='+scope.row.backupAddress" class="address">{{scope.row.backupAddress}}</a>
+                    </template>
+                </el-table-column>
+                <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_backup_effective_block')" width="250">
+                    <template scope="scope">
+                        <span>{{scope.row.backupEffectiveBlock}}{{$t('message.sharder_block')}}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column property="state" :label="$t('message.sharder_state')">
+                    <template scope="scope">
+                        <span v-if="transactions.confirmations > 0">  <!--待接口调试通后根据备份状态来显示图标-->
+                            <i class="el-icon-circle-check-outline es-success" ></i>{{scope.row.state}}
+                        </span>
+                        <span v-else>
+                            <i class="el-icon-circle-check-outline el-icon-loading" ></i>{{scope.row.state}}
+                        </span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
+        <!--移动端弹出窗-->
+        <el-dialog width="380px" :title="$t('message.sharder_backup_detail')" :visible.sync="dialogMoTableVisible" >
+            <el-table :data="tableData">
+                <el-table-column  :label="$t('message.sharder_backup_address')" width="236">
+                    <template scope="scope">
+                        <a :href="'/address.html?addr='+scope.row.backupAddress" class="address">{{scope.row.backupAddress}}</a>
+                    </template>
+                </el-table-column>
+                <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_backup_effective_block')" >
+                    <template scope="scope">
+                        <span>{{scope.row.backupEffectiveBlock}}{{$t('message.sharder_block')}}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
         <el-footer></el-footer>
     </el-container>
 </template>
 
 <style scoped>
+
     @media (max-width: 768px){
         .es-main{
             padding-left: 0px;
             padding-right: 0px;
         }
         .es-main > .info-overview-card{
-          margin-top: 0px;
-          border: initial;
-          box-shadow: initial;
+            margin-top: 0px;
+            border: initial;
+            box-shadow: initial;
+        }
+        .see{
+            color: #45a8ff;
+            margin-left: 10px;
+            font-size: small;
+        }
+        .address{
+            margin-left: 5px;
+            color: #45a8ff;
+        }
+    }
+
+    @media (min-width: 768px){
+        .see{
+            text-decoration:none;
+            margin-left: 10px;
+            color: #45a8ff;
+            cursor:pointer;
+        }
+        .address{
+            margin-left: 10px;
+            color: #45a8ff;
         }
     }
 </style>
@@ -127,7 +204,26 @@
             return {
                 msg: 'Use Vue 2.0 Today!',
                 transactions: [{}],
-
+                tableData: [{
+                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
+                    backupEffectiveBlock:'80000',
+                    state: '备份中'
+                }, {
+                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
+                    backupEffectiveBlock: '80000',
+                    state: '备份中'
+                }, {
+                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
+                    backupEffectiveBlock: '80000',
+                    state: '备份中'
+                }, {
+                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
+                    backupEffectiveBlock: '80000',
+                    state: '备份中'
+                }],
+                dialogPCTableVisible: false,
+                dialogMoTableVisible: false,
+                isPC:true
             }
         },
         methods: {
@@ -154,6 +250,12 @@
             },
         },
         created() {
+            if(navigator.userAgent.indexOf('iPhone') > -1 || navigator.userAgent.indexOf('Android') > -1){
+                this.isPC = false;
+                console.log('移动设备');
+            } else {
+                console.log('电脑')
+            }
             this.getTxInfo();
         }
     }
