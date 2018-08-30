@@ -54,6 +54,7 @@ const en = {
         'sharder_storage': 'Storage',
         'sharder_transfer': 'Transfer',
         'sharder_all': 'all',
+        'sharder_backup_state': 'backup success',
         'sharder_data_management': 'Data Management',
         // 'sharder_number': 'Quantity',
         'sharder_number': 'QTY',

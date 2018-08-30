@@ -56,7 +56,6 @@
                     <span class="key">{{$t('message.sharder_trading_type')}}</span>
                     <el-tag v-if="transactions.type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
                     <el-tag v-if="transactions.type == '6'" type="success">{{$t('message.sharder_storage')}}</el-tag>
-                    <!--<el-tag v-if="transactions.type == '6'" type="success">数据处理</el-tag>-->
                 </div>
 
                 <!--文件名称-->
@@ -79,19 +78,21 @@
                     <span class="key">{{$t('message.sharder_service_charge')}}</span>
                     <span class="value amount">{{Number().amountFormat(transactions.fee)}}</span>
                 </div>
-                <!--备份数-->
-                <div class="text item">
-                    <span class="key">{{$t('message.sharder_backup_number')}}</span>
-                    <span class="value">{{ 0 }}{{$t('message.sharder_copies')}}
-                        <a class="see" v-if="isPC" @click="dialogPCTableVisible = true">{{$t('message.sharder_check')}}</a>
-                        <a class="see" v-else @click="dialogMoTableVisible = true">{{$t('message.sharder_check')}}</a>
-                    </span>
-                </div>
-                <!--有效区块-->
-                <div class="text item">
-                    <span class="key">{{$t('message.sharder_backup_effective_block')}}</span>
-                    <span class="value" v-if="this.$i18n.locale === 'cn'">第{{ 0 }}</span>
-                    <span class="value" v-else-if="this.$i18n.locale === 'en'">{{ 0 }}th</span>
+                <div v-if="txType">
+                    <!--备份数-->
+                    <div class="text item">
+                        <span class="key">{{$t('message.sharder_backup_number')}}</span>
+                        <span class="value">{{ backups.data.length }}{{$t('message.sharder_copies')}}
+                            <a class="see" v-if="isPC" @click="dialogPCTableVisible = true">{{$t('message.sharder_check')}}</a>
+                            <a class="see" v-else @click="dialogMoTableVisible = true">{{$t('message.sharder_check')}}</a>
+                        </span>
+                    </div>
+                    <!--有效区块-->
+                    <div class="text item">
+                        <span class="key">{{$t('message.sharder_backup_effective_block')}}</span>
+                        <span class="value" v-if="this.$i18n.locale === 'cn'">第{{ backups.count }}块</span>
+                        <span class="value" v-else-if="this.$i18n.locale === 'en'">{{ backups.count }}th</span>
+                    </div>
                 </div>
                 <!--交易状态及确认数-->
                 <div class="text item">
@@ -112,7 +113,7 @@
             <el-table :data="tableData">
                 <el-table-column  :label="$t('message.sharder_backup_address')" width="338">
                     <template scope="scope">
-                        <a :href="'/address.html?addr='+scope.row.backupAddress" class="address">{{scope.row.backupAddress}}</a>
+                        <a href="#" class="address">{{scope.row.backupAddress}}</a>  <!--/address.html?addr='+scope.row.backupAddress-->
                     </template>
                 </el-table-column>
                 <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_backup_effective_block')" width="250">
@@ -122,12 +123,7 @@
                 </el-table-column>
                 <el-table-column property="state" :label="$t('message.sharder_state')">
                     <template scope="scope">
-                        <span v-if="transactions.confirmations > 0">  <!--待接口调试通后根据备份状态来显示图标-->
-                            <i class="el-icon-circle-check-outline es-success" ></i>{{scope.row.state}}
-                        </span>
-                        <span v-else>
-                            <i class="el-icon-circle-check-outline el-icon-loading" ></i>{{scope.row.state}}
-                        </span>
+                            <i class="el-icon-circle-check-outline es-success" ></i>{{$t('message.sharder_backup_state')}}
                     </template>
                 </el-table-column>
             </el-table>
@@ -137,7 +133,7 @@
             <el-table :data="tableData">
                 <el-table-column  :label="$t('message.sharder_backup_address')" width="236">
                     <template scope="scope">
-                        <a :href="'/address.html?addr='+scope.row.backupAddress" class="address">{{scope.row.backupAddress}}</a>
+                        <a href="#" class="address">{{scope.row.backupAddress}}</a>  <!--'/address.html?addr='+scope.row.backupAddress-->
                     </template>
                 </el-table-column>
                 <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_backup_effective_block')" >
@@ -204,23 +200,11 @@
             return {
                 msg: 'Use Vue 2.0 Today!',
                 transactions: [{}],
-                tableData: [{
-                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
-                    backupEffectiveBlock:'80000',
-                    state: '备份中'
-                }, {
-                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
-                    backupEffectiveBlock: '80000',
-                    state: '备份中'
-                }, {
-                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
-                    backupEffectiveBlock: '80000',
-                    state: '备份中'
-                }, {
-                    backupAddress: 'SSA-DE4Z-PT2M-976J-EKYFC',
-                    backupEffectiveBlock: '80000',
-                    state: '备份中'
-                }],
+                backups:{
+                    data:{}
+                },
+                txType:true,
+                tableData: [],
                 dialogPCTableVisible: false,
                 dialogMoTableVisible: false,
                 isPC:true
@@ -228,8 +212,13 @@
         },
         methods: {
             getTxInfo() {
+                var _this = this;
                 let key = "&hash=";
                 let queryParam = Util.GetUrlParam("hash");
+                let txType = Util.GetUrlParam("type");
+                if (txType !== ''){
+                    this.txType = false;
+                }
                 if(Util.isEmpty(queryParam)){
                     queryParam = Util.GetUrlParam("txId");
                     key = "&txID=";
@@ -238,6 +227,7 @@
                 if(Util.isEmpty(tx)){
                     axios.get(api.TX +key+queryParam, {withCredentials: true})
                         .then(res => {
+                            _this.getBackups(res.data.hash);
                             this.transactions = res.data;
                             Util.storageTrade(res.data);
                         })
@@ -246,15 +236,28 @@
                         });
                 }else{
                     this.transactions = tx;
+                    _this.getBackups(tx.hash);
                 }
             },
+            getBackups(hash){
+                var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                axios.get(URL + "&storeHash=" + hash,{withCredentials:false})
+                    .then(data =>{
+                        if (data.data !== "") {
+                            let count = 0;
+                            for (let i = 0; i < data.data.data.length; i++) {
+                                count += data.data.data[i].backupEffectiveBlock;
+                            }
+                            this.$set(data.data,"count",count);
+                            this.backups = data.data;
+                            this.tableData = this.backups.data;
+                        }
+                    })
+            }
         },
         created() {
             if(navigator.userAgent.indexOf('iPhone') > -1 || navigator.userAgent.indexOf('Android') > -1){
                 this.isPC = false;
-                console.log('移动设备');
-            } else {
-                console.log('电脑')
             }
             this.getTxInfo();
         }

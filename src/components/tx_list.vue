@@ -4,7 +4,6 @@
             <el-radio-group v-model="filterTypeRadio" @change="filterType" size="small" class="tx-type-select-block">
                 <el-radio-button class="select-btn"  :label="$t('message.sharder_transfer')" @click.native="selectedType='zz'"></el-radio-button>
                 <el-radio-button class="select-btn"  :label="$t('message.sharder_storage')"  @click.native="selectedType='cc'"></el-radio-button>
-                <!--<el-radio-button  label="数据处理" @click="selectedType='sjcl'"></el-radio-button>-->
             </el-radio-group>
         </div>
 
@@ -29,7 +28,7 @@
             <!--交易hash-->
             <el-table-column prop="hash" :label="$t('message.sharder_trading_hash')">
                 <template slot-scope="scope">
-                    <a class="hash" :href="'/tx.html?hash='+scope.row.hash">
+                    <a class="hash" :href="'/tx.html?hash='+scope.row.hash+'&type=zz'">
                         <el-button type="text" size="small">{{scope.row.hash}}</el-button>
                     </a>
                 </template>
@@ -86,10 +85,10 @@
                             <a :href="'/address.html?addr='+props.row.sender" class="es-link"><span>{{ props.row.sender }}</span></a>
                         </el-form-item><br/>
                         <el-form-item :label="$t('message.sharder_backup_number')" class="form">
-                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ 0 }}{{$t('message.sharder_copies')}}</span></a>
+                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ props.row.backups.data.length }}{{$t('message.sharder_copies')}}</span></a>
                         </el-form-item><br/>
                         <el-form-item :label="$t('message.sharder_backup_effective_block')" class="form">
-                            <span>{{ 0 }}{{$t('message.sharder_block')}}</span>
+                            <span>{{ props.row.backups.count}}{{$t('message.sharder_block')}}</span>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -243,11 +242,11 @@
 
                         <!--备份数-->
                         <el-form-item class="item" :label="$t('message.sharder_backup_number')" >
-                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ 0 }}{{$t('message.sharder_copies')}}</span></a>
+                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ props.row.backups.data.length }}{{$t('message.sharder_copies')}}</span></a>
                         </el-form-item>
 
                         <el-form-item class="item" :label="$t('message.sharder_backup_effective_block')">
-                            <span>{{ 0 }}{{$t('message.sharder_block')}}</span>
+                            <span>{{ props.row.backups.count }}{{$t('message.sharder_block')}}</span>
                         </el-form-item>
 
                         <!--文件名称-->
@@ -374,6 +373,8 @@
 </style>
 <script>
     import Util from '../assets/js/util';
+    import axios from "axios";
+    /*import api from '../../assets/api';*/
 
     export default {
         name: "tx_list",
@@ -390,8 +391,6 @@
         props:['transactions','address'],
         methods: {
             filterType() {
-                console.log(this.transactions)
-                console.log(this.selectedType)
                 let value = "";
                 if(this.selectedType === "zz"){
                     value = 0;
@@ -406,6 +405,25 @@
                 for (let i=0;i<this.originalTxs.length;i++)
                 {
                     if(this.originalTxs[i].type == value){
+
+                        if (value == '6') {
+                            /*this.getBackup(this.originalTxs[i].hash);*/
+                            var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                            axios.get(URL + "&storeHash=" + this.originalTxs[i].hash,{withCredentials:false})  //获取备份相关数据
+                                .then(res =>{
+                                    if (res.data !== "") {
+                                        let count = 0;
+                                        for (let j = 0; j < res.data.data.length; j++) {
+                                            count += res.data.data[j].backupEffectiveBlock;
+                                        }
+                                        this.$set(res.data,"count",count);
+                                        this.$set(this.originalTxs[i],"backups",res.data);
+                                    }
+                                }).catch(function (error) {
+
+                                console.log(error)
+                            })
+                        }
                         temporary.push(this.originalTxs[i])
                     }
                 }
@@ -414,6 +432,25 @@
                 if(Util.isEmpty(temporary) && Util.isNotEmpty(this.transactionsData)){
                     this.nodata();
                 }
+            },
+            getBackup(hash){
+                console.log(hash)
+                var backups = "";
+                /*axios.get(api.BACKUOS_INFO + "&storeHash=" + hash,{withCredentials:true})
+                    .then(res =>{
+                        console.log(res)
+                    })*/
+                var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                axios.get(URL + "&storeHash=" + hash,{withCredentials:false})
+                    .then(res =>{
+                        return res.data;
+                        backups = res.data;
+                    }).catch(function (error) {
+
+                        console.log(error)
+                        return false;
+                })
+
             },
             startup(){
                 if(Util.isNotEmpty(this.transactions)){

@@ -16,6 +16,8 @@ const api={
     TX:url("?requestType=getTx"), //获取指定交易数据
     TX_STATISTICS:url("?requestType=getTxStatistics"), //获取统计数据
 
+    BACKUOS_INFO:url("?requestType=getBackup"),//获取备份相关数据
+
     methods:{
         getLastHeight:function (_callBack) {
             axios.get(api.BLOCK_HEIGHT,{withCredentials:true}).then(res=>{

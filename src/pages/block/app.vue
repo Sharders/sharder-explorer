@@ -85,7 +85,6 @@
                     axios.get(api.BLOCK_BY_HEIGHT + "&height=" + _height, {withCredentials: true})
                         .then(res => {
                             this.blockInfo = res.data;
-
                             this.showlist = true;
                             this.storageTrade();
                             this.previousNext();

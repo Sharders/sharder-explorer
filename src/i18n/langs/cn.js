@@ -51,6 +51,7 @@ const cn = {
         'sharder_storage': '存储',
         'sharder_transfer': '转账',
         'sharder_all': '全部',
+        'sharder_backup_state': '备份成功',
         'sharder_data_management': '数据处理',
         'sharder_number': '数量',
         'sharder_cost': '费用',
