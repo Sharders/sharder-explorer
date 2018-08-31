@@ -407,8 +407,8 @@
                     if(this.originalTxs[i].type == value){
 
                         if (value == '6') {
-                            /*this.getBackup(this.originalTxs[i].hash);*/
                             var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                            /*api.methods.getBaseUrl(api.BACKUPS_INFO)*/
                             axios.get(URL + "&storeHash=" + this.originalTxs[i].hash,{withCredentials:false})  //获取备份相关数据
                                 .then(res =>{
                                     if (res.data !== "") {
@@ -432,25 +432,6 @@
                 if(Util.isEmpty(temporary) && Util.isNotEmpty(this.transactionsData)){
                     this.nodata();
                 }
-            },
-            getBackup(hash){
-                console.log(hash)
-                var backups = "";
-                /*axios.get(api.BACKUOS_INFO + "&storeHash=" + hash,{withCredentials:true})
-                    .then(res =>{
-                        console.log(res)
-                    })*/
-                var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
-                axios.get(URL + "&storeHash=" + hash,{withCredentials:false})
-                    .then(res =>{
-                        return res.data;
-                        backups = res.data;
-                    }).catch(function (error) {
-
-                        console.log(error)
-                        return false;
-                })
-
             },
             startup(){
                 if(Util.isNotEmpty(this.transactions)){

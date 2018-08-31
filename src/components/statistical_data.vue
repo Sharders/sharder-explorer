@@ -121,12 +121,8 @@
         },
         methods:{
             getTxStatistics(){
-
-
-                axios.get(api.TX_STATISTICS,{withCredentials: true}).then(res =>{
+                axios.get(api.methods.getBaseUrl(api.TX_STATISTICS),{withCredentials: true}).then(res =>{
                     this.statistical = res.data;
-
-
                     this.statistical.prevBlockTime = Util.getLocalStorage("prevBlockTime");
                     this.statistical.avgBlockTime = Util.getLocalStorage("avgBlockTime");
                 }).catch(function (error) {

@@ -25,7 +25,7 @@
                     <el-dropdown-item command="en">English</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
-            <el-dropdown class="nav-dropdown nav-lang el-dropdown network" trigger="click"  @command="changeNetWork">
+            <el-dropdown class="nav-dropdown nav-lang el-dropdown network" trigger="click"  @command="changeNetwork">
             <span  class="el-dropdown-link" role="button">
                 {{$t('message.sharder_select_network')}}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
@@ -42,6 +42,8 @@
     import Util from '../assets/js/util';
     import logo from 'assets/img/logo.png'
     import search from "./search.vue";
+    import api from '../assets/api';
+    import index from '../pages/index/app.vue';
 
     export default {
         name: "es-header",
@@ -62,8 +64,10 @@
                 Util.setlang(_select);
                 console.info("语言切换成:" + this.$i18n.locale);
             },
-            changeNetWork(_select){
+            changeNetwork(_select){
                 console.log(_select)
+                /*api.methods.transferNetwork(_select);*/
+                index.methods.getTxInfo();
             },
             searchText(_data){
                 if(_data == null || _data == ''){

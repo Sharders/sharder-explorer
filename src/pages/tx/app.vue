@@ -225,7 +225,7 @@
                 }
                 let tx = Util.getJsonLocalStorage(queryParam);
                 if(Util.isEmpty(tx)){
-                    axios.get(api.TX +key+queryParam, {withCredentials: true})
+                    axios.get(api.methods.getBaseUrl(api.TX) +key+queryParam, {withCredentials: true})
                         .then(res => {
                             _this.getBackups(res.data.hash);
                             this.transactions = res.data;
@@ -241,6 +241,7 @@
             },
             getBackups(hash){
                 var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                /*api.methods.getBaseUrl(api.BACKUPS_INFO)*/
                 axios.get(URL + "&storeHash=" + hash,{withCredentials:false})
                     .then(data =>{
                         if (data.data !== "") {

@@ -82,7 +82,7 @@
             getBlockInfo() {
                 let blockInfo = Util.getJsonLocalStorage(_height);
                 if (blockInfo == null) {
-                    axios.get(api.BLOCK_BY_HEIGHT + "&height=" + _height, {withCredentials: true})
+                    axios.get(api.methods.getBaseUrl(api.BLOCK_BY_HEIGHT) + "&height=" + _height, {withCredentials: true})
                         .then(res => {
                             this.blockInfo = res.data;
                             this.showlist = true;

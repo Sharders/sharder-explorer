@@ -255,7 +255,7 @@
                     includeTypes = "&includeTypes=" + type;
                 }
                 let _this = this;
-                axios.get(api.BLOCK_INFO +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex + includeTypes, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.BLOCK_INFO) +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex + includeTypes, {withCredentials: true})
                     .then(res => {
                         _this.loading = false;
                             if(res.data !== null && res.data.length !==0){

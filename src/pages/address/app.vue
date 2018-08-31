@@ -60,7 +60,7 @@
                 return Util.isPC();
             },
             getTxInfo() {
-                axios.get(api.ACCOUNT_INFO + "&account=" +this.addr, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.ACCOUNT_INFO) + "&account=" +this.addr, {withCredentials: true})
                     .then(res => {
                         this.account = res.data;
                     })

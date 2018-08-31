@@ -87,7 +87,7 @@
                }
             },
             getAccountInfo(){
-                axios.get(api.ACCOUNT_INFO + "&account=" +this.searchText, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.ACCOUNT_INFO) + "&account=" +this.searchText, {withCredentials: true})
                     .then(res => {
                         if(Util.isEmpty(res.data.errorCode)){
                             this.success("/address.html?addr=");
@@ -100,7 +100,7 @@
                     });
             },
             getTxinfoByTxid(){
-                axios.get(api.TX +"&txID="+this.searchText, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.TX) +"&txID="+this.searchText, {withCredentials: true})
                     .then(res => {
                         if(Util.isEmpty(res.data.errorCode)){
                             Util.storageTradeTxid(res.data);
@@ -114,7 +114,7 @@
                     });
             },
             getTxinfoByHash(){
-                axios.get(api.TX +"&hash="+this.searchText, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.TX) +"&hash="+this.searchText, {withCredentials: true})
                     .then(res => {
                         if(Util.isEmpty(res.data.errorCode)){
                             Util.storageTrade(res.data);
@@ -133,7 +133,7 @@
                     this.success("/block.html?height=");
                     return;
                 }
-                axios.get(api.BLOCK_BY_HEIGHT + "&height=" + this.searchText, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.BLOCK_BY_HEIGHT) + "&height=" + this.searchText, {withCredentials: true})
                     .then(res => {
                         console.log(res);
                         if(Util.isEmpty(res.data.errorCode)){
