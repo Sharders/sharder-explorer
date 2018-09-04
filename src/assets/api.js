@@ -47,7 +47,7 @@ const api={
             let networkState = util.getLocalStorage("networkState");
             if (networkState !== null){
                 console.log(networkState)
-                /*this.transferNetwork(networkState);*/
+                /*this.transferNetwork(networkState);*/  //开启切换网络
             }
             return baseUrl+path;
         },

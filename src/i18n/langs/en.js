@@ -65,7 +65,7 @@ const en = {
         'sharder_backup_effective_block': 'backup effective block',
         'sharder_copies': 'copies',
         'sharder_block': 'th',
-        'sharder_check': 'look',
+        'sharder_check': 'view',
         'sharder_backup_address': 'backup address',
         'sharder_backup_detail': 'backup details',
         'sharder_state': 'state',
