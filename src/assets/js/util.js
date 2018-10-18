@@ -150,17 +150,8 @@ const util = {
     isEmpty:function(params){
         return !this.isNotEmpty(params);
     },
-    getServerConstant:function () {
-        axios.get(api.SERVER_CONSTANT,{withCredentials:true}).then(res=>{
-            this.setJsonLocalStorage("SERVER_CONSTANT",res.data);
-        }).catch(function (error) {
-            console.log(error);
-        })
-    },
-
 }
-//
-util.getServerConstant();
+
 export default util;
 
 Date.prototype.Format = function (fmt) {

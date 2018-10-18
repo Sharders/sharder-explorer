@@ -79,19 +79,19 @@
                     <span class="value amount">{{Number().amountFormat(transactions.fee)}}</span>
                 </div>
                 <div v-if="txType">
-                    <!--备份数-->
+                    <!--备份交易ID-->
                     <div class="text item">
-                        <span class="key">{{$t('message.sharder_backup_number')}}</span>
-                        <span class="value">{{ backups.data.length }}{{$t('message.sharder_copies')}}
+                        <span class="key">{{$t('message.sharder_backup_id')}}</span>
+                        <span class="value">{{ backups.backup_Tx }}
                             <a class="see" v-if="isPC" @click="dialogPCTableVisible = true">{{$t('message.sharder_check')}}</a>
                             <a class="see" v-else @click="dialogMoTableVisible = true">{{$t('message.sharder_check')}}</a>
                         </span>
                     </div>
-                    <!--有效区块-->
+                    <!--备份交易确认数-->
                     <div class="text item">
-                        <span class="key">{{$t('message.sharder_backup_effective_block')}}</span>
-                        <span class="value" v-if="this.$i18n.locale === 'cn'">第{{ backups.count }}块</span>
-                        <span class="value" v-else-if="this.$i18n.locale === 'en'">{{ backups.count }}th</span>
+                        <span class="key">{{$t('message.sharder_backup_confirm')}}</span>
+                        <span class="value">{{ backups.backup_Tx_confirmations }}</span>
+                        <!--<span class="value" v-else-if="this.$i18n.locale === 'en'">{{ backups.backup_Tx_confirmations }}th</span>-->
                     </div>
                 </div>
                 <!--交易状态及确认数-->
@@ -109,11 +109,43 @@
             </el-card>
         </el-main>
         <!--PC端弹出窗-->
-        <el-dialog width="800px" :title="$t('message.sharder_backup_address')" :visible.sync="dialogPCTableVisible" >
+        <el-dialog width="800px" :title="$t('message.sharder_backup_detail')" :visible.sync="dialogPCTableVisible" >
+            <el-table :data="tableData">
+                <el-table-column  :label="$t('message.sharder_storer_id')">
+                    <template scope="scope">
+                        <a href="#" class="address">{{scope.row.storerId}}</a>  <!--/address.html?addr='+scope.row.backupAddress-->
+                    </template>
+                </el-table-column>
+                <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_storer_address')">
+                    <template scope="scope">
+                        <span>{{scope.row.storerAddress}}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
+
+        <!--移动端弹出窗-->
+        <el-dialog width="380px" :title="$t('message.sharder_backup_detail')" :visible.sync="dialogMoTableVisible" >
+            <el-table :data="tableData">
+                <el-table-column  :label="$t('message.sharder_storer_id')" width="220">
+                    <template scope="scope">
+                        <a href="#" class="address">{{scope.row.storerId}}</a>  <!--'/address.html?addr='+scope.row.backupAddress-->
+                    </template>
+                </el-table-column>
+                <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_storer_address')" >
+                    <template scope="scope">
+                        <span>{{scope.row.storerAddress}}{{$t('message.sharder_block')}}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-dialog>
+
+
+        <!--<el-dialog width="800px" :title="$t('message.sharder_backup_address')" :visible.sync="dialogPCTableVisible" >
             <el-table :data="tableData">
                 <el-table-column  :label="$t('message.sharder_backup_address')" width="338">
                     <template scope="scope">
-                        <a href="#" class="address">{{scope.row.backupAddress}}</a>  <!--/address.html?addr='+scope.row.backupAddress-->
+                        <a href="#" class="address">{{scope.row.backupAddress}}</a>  &lt;!&ndash;/address.html?addr='+scope.row.backupAddress&ndash;&gt;
                     </template>
                 </el-table-column>
                 <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_backup_effective_block')" width="250">
@@ -127,13 +159,13 @@
                     </template>
                 </el-table-column>
             </el-table>
-        </el-dialog>
-        <!--移动端弹出窗-->
-        <el-dialog width="380px" :title="$t('message.sharder_backup_detail')" :visible.sync="dialogMoTableVisible" >
+        </el-dialog>-->
+
+        <!--<el-dialog width="380px" :title="$t('message.sharder_backup_detail')" :visible.sync="dialogMoTableVisible" >
             <el-table :data="tableData">
                 <el-table-column  :label="$t('message.sharder_backup_address')" width="236">
                     <template scope="scope">
-                        <a href="#" class="address">{{scope.row.backupAddress}}</a>  <!--'/address.html?addr='+scope.row.backupAddress-->
+                        <a href="#" class="address">{{scope.row.backupAddress}}</a>  &lt;!&ndash;'/address.html?addr='+scope.row.backupAddress&ndash;&gt;
                     </template>
                 </el-table-column>
                 <el-table-column property="backupEffectiveBlock" :label="$t('message.sharder_backup_effective_block')" >
@@ -142,7 +174,7 @@
                     </template>
                 </el-table-column>
             </el-table>
-        </el-dialog>
+        </el-dialog>-->
         <el-footer></el-footer>
     </el-container>
 </template>
@@ -200,9 +232,7 @@
             return {
                 msg: 'Use Vue 2.0 Today!',
                 transactions: [{}],
-                backups:{
-                    data:{}
-                },
+                backups:{},
                 txType:true,
                 tableData: [],
                 dialogPCTableVisible: false,
@@ -240,19 +270,12 @@
                 }
             },
             getBackups(hash){
-                var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
-                /*api.methods.getBaseUrl(api.BACKUPS_INFO)*/
-                axios.get(URL + "&storeHash=" + hash,{withCredentials:false})
+                // var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                var URL = "http://13.228.74.150:8215/sharder?requestType=getBackup";
+                axios.get(URL + "&txID=" + hash,{withCredentials:false})
                     .then(data =>{
-                        if (data.data !== "") {
-                            let count = 0;
-                            for (let i = 0; i < data.data.data.length; i++) {
-                                count += data.data.data[i].backupEffectiveBlock;
-                            }
-                            this.$set(data.data,"count",count);
-                            this.backups = data.data;
-                            this.tableData = this.backups.data;
-                        }
+                        this.backups = data.data.backups[0];
+                        this.tableData = data.data.backups;
                     })
             }
         },

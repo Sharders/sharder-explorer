@@ -10,13 +10,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     port: 8010,
     historyApiFallback: false,
     noInfo: true,
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-        pathRewrite: { '^/api': '' }
-      }
-    },
     open: true,
     openPage: ''
   }

@@ -9,8 +9,7 @@
                         <h2 class="t-d">Sharder Block Explorer</h2>
                     </span>
                 </a>
-
-                <span class="alpha">Alpha</span>
+                <span class="alpha">{{netWork}}</span>
             </div>
             <es-search class="header-search" :class="{ show_mobile_search_block: show_mobile_search }" @searchText="searchText"></es-search>
 
@@ -56,6 +55,7 @@
             return {
                 show_mobile_search:false,
                 logoImg: logo,
+                netWork: Util.getLocalStorage("networkState")
             }
         },
         methods:{
@@ -65,9 +65,9 @@
                 console.info("语言切换成:" + this.$i18n.locale);
             },
             changeNetwork(_select){
-                console.log(_select)
-                /*api.methods.transferNetwork(_select);*/
+                api.methods.transferNetwork(_select);
                 index.methods.getTxInfo();
+                window.location.reload();
             },
             searchText(_data){
                 if(_data == null || _data == ''){

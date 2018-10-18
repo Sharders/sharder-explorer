@@ -38,8 +38,7 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column prop="blockId" :label="this.$t('message.sharder_block_hash')"
-                                     ></el-table-column>
+                    <el-table-column prop="blockId" :label="this.$t('message.sharder_block_hash')"></el-table-column>
                     <el-table-column :label="$t('message.sharder_time')">
                         <template slot-scope="scope">
                             {{new Date().BlockDate(scope.row.timestamp)}}
@@ -54,12 +53,15 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column width="140px" :label="this.$t('message.sharder_trading_type')" :render-header="PCRenderHeader">
+                    <el-table-column width="140px" :label="this.$t('message.sharder_trading_type')" :render-header="renderHeader">
                         <template slot-scope="scope">
                             <span v-for="type in scope.row.types" class="tx_type_tag">
                                 <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
 
                                 <el-tag size="mini" v-if="type == '6'" type="success">{{$t('message.sharder_storage')}}</el-tag>
+
+                                <el-tag size="mini" v-if="type == '9'" type="warning">{{$t('message.sharder_coin_base')}}</el-tag>
+
                             </span>
                         </template>
                     </el-table-column>
@@ -97,12 +99,15 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column  :render-header="MORenderHeader">
+                        <el-table-column  :render-header="renderHeader">
                             <template slot-scope="scope">
                             <span v-for="type in scope.row.types" >
                                 <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
 
                                 <el-tag size="mini" v-if="type == '6'" type="success">{{$t('message.sharder_storage')}}</el-tag>
+
+                                <el-tag size="mini" v-if="type == '9'" type="warning">{{$t('message.sharder_coin_base')}}</el-tag>
+
                             </span>
                             </template>
                         </el-table-column>
@@ -150,99 +155,107 @@
         },
         methods: {
 
-            PCRenderHeader(h,para) {
+            renderHeader(h,para) {
                 var _this = this;
-                return (
-                    h('span',[
-                        h('el-select',{
-                            attrs: {
-                                placeholder:this.$t('message.sharder_trading_type'),
-                                size:"mini",
-                            },
-                            "class":{
-                                "tx-type-PC":true
-                            },
-                            on:{
-                                change:function (type) {
-                                    _this.type = type;
-                                    /*var index = _this.lastNum;
-                                    console.log(index)
-                                    if (type === '6') {  //取100条以内为存储类型的记录
-                                        _this.getTxInfo(_this.firstNum,_this.lastNum + 100,type)//数据拉取条数上限为100
-                                        _this.lastNum = index;
-                                    }else{
+                var netWork = Util.getLocalStorage("networkState");
+                if (netWork == "alpha") {
+                    return (
+                        h('span',[
+                            h('el-select',{
+                                attrs: {
+                                    placeholder:this.$t('message.sharder_trading_type'),
+                                    size:"mini",
+                                },
+                                "class":{
+                                    "tx-type-PC":true
+                                },
+                                on:{
+                                    change:function (type) {
+                                        _this.type = type;
+                                        /*var index = _this.lastNum;
+                                        console.log(index)
+                                        if (type === '6') {  //取100条以内为存储类型的记录
+                                            _this.getTxInfo(_this.firstNum,_this.lastNum + 100,type)//数据拉取条数上限为100
+                                            _this.lastNum = index;
+                                        }else{
+                                            _this.getTxInfo(_this.firstNum,_this.lastNum,type)
+                                        }*/
+                                        _this.loading = true;
+                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type);
+                                    }
+                                },
+                            },[
+                                h('el-option',{
+                                    attrs: {   //可以用props:{value:"xxx"}直接将值设置到组件当中
+                                        label:this.$t('message.sharder_all'),
+                                        value: ""
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_coin_base'),
+                                        value: "9"
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_transfer'),
+                                        value: "0"
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_storage'),
+                                        value: "6"
+                                    }
+                                })
+                            ]),
+
+                        ],'')
+                    )
+                }else {
+                    return (
+                        h('span',[
+                            h('el-select',{
+                                attrs: {
+                                    placeholder:this.$t('message.sharder_trading_type'),
+                                    size:"mini",
+                                },
+                                "class":{
+                                    "tx-type-MO":true
+                                },
+                                on:{
+                                    change:function (type) {
+                                        _this.type = type;
+                                        _this.loading = true;
                                         _this.getTxInfo(_this.firstNum,_this.lastNum,type)
-                                    }*/
-                                    _this.loading = true;
-                                    _this.getTxInfo(_this.firstNum,_this.lastNum,type);
-                                }
-                            },
-                        },[
-                            h('el-option',{
-                                attrs: {   //可以用props:{value:"xxx"}直接将值设置到组件当中
-                                    label:this.$t('message.sharder_all'),
-                                    value: ""
-                                }
-                            }),
-                            h('el-option',{
-                                attrs: {
-                                    label:this.$t('message.sharder_transfer'),
-                                    value: "0"
-                                }
-                            }),
-                            h('el-option',{
-                                attrs: {
-                                    label:this.$t('message.sharder_storage'),
-                                    value: "6"
-                                }
-                            })
-                        ]),
+                                    }
+                                },
+                            },[
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_all'),
+                                        value: ""
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_transfer'),
+                                        value: "0"
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_storage'),
+                                        value: "6"
+                                    }
+                                })
+                            ]),
 
-                    ],'')
-                )
-            },
-            MORenderHeader(h,para) {
-                var _this = this;
-                return (
-                    h('span',[
-                        h('el-select',{
-                            attrs: {
-                                placeholder:this.$t('message.sharder_trading_type'),
-                                size:"mini",
-                            },
-                            "class":{
-                                "tx-type-MO":true
-                            },
-                            on:{
-                                change:function (type) {
-                                    _this.type = type;
-                                    _this.loading = true;
-                                    _this.getTxInfo(_this.firstNum,_this.lastNum,type)
-                                }
-                            },
-                        },[
-                            h('el-option',{
-                                attrs: {
-                                    label:this.$t('message.sharder_all'),
-                                    value: ""
-                                }
-                            }),
-                            h('el-option',{
-                                attrs: {
-                                    label:this.$t('message.sharder_transfer'),
-                                    value: "0"
-                                }
-                            }),
-                            h('el-option',{
-                                attrs: {
-                                    label:this.$t('message.sharder_storage'),
-                                    value: "6"
-                                }
-                            })
-                        ]),
+                        ],'')
+                    )
+                }
 
-                    ],'')
-                )
             },
             isPc(){
                 return Util.isPC();
@@ -255,13 +268,16 @@
                     includeTypes = "&includeTypes=" + type;
                 }
                 let _this = this;
+                if (firstIndex == undefined && lashIndex == undefined) {
+                    firstIndex = 0;
+                    lashIndex = 9;
+                }
                 axios.get(api.methods.getBaseUrl(api.BLOCK_INFO) +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex + includeTypes, {withCredentials: true})
                     .then(res => {
                         _this.loading = false;
                             if(res.data !== null && res.data.length !==0){
                                 this.blockInfo = res.data;
                                 this.handleBlockIncludeOfOrderType(this.blockInfo);
-
                                 Util.storageBlocks(res.data);
                                 if (res.data.length !==0 && firstIndex === 0) {
                                     this.totalNum = res.data[0].height;

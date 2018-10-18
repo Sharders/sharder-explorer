@@ -2,12 +2,76 @@
     <div>
         <div class="tx-type-select-group" style="margin-top:20px">
             <el-radio-group v-model="filterTypeRadio" @change="filterType" size="small" class="tx-type-select-block">
+                <el-radio-button class="select-btn" v-if="netWork == 'alpha'" :label="$t('message.sharder_coin_base')" @click.native="selectedType='cb'"></el-radio-button>
                 <el-radio-button class="select-btn"  :label="$t('message.sharder_transfer')" @click.native="selectedType='zz'"></el-radio-button>
                 <el-radio-button class="select-btn"  :label="$t('message.sharder_storage')"  @click.native="selectedType='cc'"></el-radio-button>
             </el-radio-group>
         </div>
 
         <!------------------------------------------pc 端的转账存储 start------------------------------------------------------>
+
+        <!--coin base-->
+        <el-table :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'cb'">
+            <!--折叠面板-->
+            <el-table-column type="expand">
+                <template slot-scope="props">
+                    <el-form label-position="left" inline class="to-form">
+                        <el-form-item :label="$t('message.sharder_initiator')" class="form">
+                            <a :href="'/address.html?addr='+props.row.sender" class="es-link" ><span>{{ props.row.sender }}</span></a>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <!--交易id-->
+            <el-table-column prop="hash" :label="$t('message.sharder_trading_hash')">
+                <template slot-scope="scope">
+                    <a class="hash" :href="'/tx.html?hash='+scope.row.hash+'&type=zz'">
+                        <el-button type="text" size="small">{{scope.row.hash}}</el-button>
+                    </a>
+                </template>
+            </el-table-column>
+            <!--����id-->
+            <el-table-column prop="transactionId" :label="$t('message.sharder_trading_ID')"></el-table-column>
+
+
+            <!--交易类型 new-->
+            <el-table-column prop="type" :label="$t('message.sharder_trading_type')" v-if="address != '' && address != null" width="140">
+                <template slot-scope="scope">
+                    <el-tag v-if="scope.row.sender == address" style="color: #F56C6C">OUT</el-tag>
+                    <el-tag v-if="scope.row.recipient == address" style="color: #67C23A">IN</el-tag>
+                </template>
+            </el-table-column>
+
+            <!--交易数量-->
+            <el-table-column prop="amount" :label="$t('message.sharder_number')" width="150">
+                <template slot-scope="scope">
+                    <span class="amount">{{Number().amountFormat(scope.row.amount)}}</span>
+                </template>
+            </el-table-column>
+            <!--费用-->
+            <el-table-column  :label="$t('message.sharder_cost')" width="100">
+                <template slot-scope="scope">
+                    <span class="amount">{{Number().amountFormat(scope.row.fee)}}</span>
+                </template>
+            </el-table-column>
+            <!--创建时间-->
+            <el-table-column :label="$t('message.sharder_creation_time')">
+                <template slot-scope="scope">
+                    {{new Date().BlockDate(scope.row.timestamp)}}
+                </template>
+            </el-table-column>
+            <!--确认数及其状态-->
+            <el-table-column  :label="$t('message.sharder_confirmation_state')">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.confirmations > 0">
+                        <i class="el-icon-circle-check-outline es-success" ></i> ({{$t('message.sharder_ok_num')}}:{{scope.row.confirmations}})
+                    </span>
+                    <span v-else>
+                        <i class="el-icon-circle-check-outline el-icon-loading" ></i> (pending)
+                    </span>
+                </template>
+            </el-table-column>
+        </el-table>
 
         <!--转账-->
         <el-table :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'zz'">
@@ -84,11 +148,11 @@
                         <el-form-item :label="$t('message.sharder_store')" class="form">
                             <a :href="'/address.html?addr='+props.row.sender" class="es-link"><span>{{ props.row.sender }}</span></a>
                         </el-form-item><br/>
-                        <el-form-item :label="$t('message.sharder_backup_number')" class="form">
-                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ props.row.backups.data.length }}{{$t('message.sharder_copies')}}</span></a>
+                        <el-form-item v-if="netWork == 'alpha'" :label="$t('message.sharder_backup_id')" class="form">
+                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ props.row.backups[0].backup_Tx }}</span></a>
                         </el-form-item><br/>
-                        <el-form-item :label="$t('message.sharder_backup_effective_block')" class="form">
-                            <span>{{ props.row.backups.count}}{{$t('message.sharder_block')}}</span>
+                        <el-form-item  v-if="netWork == 'alpha'" :label="$t('message.sharder_backup_confirm')" class="form">
+                            <span>{{ props.row.backups[0].backup_Tx_confirmations }}</span>
                         </el-form-item>
                     </el-form>
                 </template>
@@ -154,6 +218,47 @@
         </el-table>
         <!--pc 端的转账存储 end-->
         <!------------------------------------------mobile 端的转账存储 start------------------------------------------------------>
+
+        <!--coin base-->
+        <el-table :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'cb'">
+            <!--折叠面板-->
+            <el-table-column  type="expand" width="40" >
+                <template slot-scope="props" >
+                    <el-form label-position="left" inline class="to-form">
+                        <!--交易发送者-->
+                        <el-form-item class="item"   :label="$t('message.sharder_initiator')">
+                            <span> <a :href="'/address.html?addr='+props.row.sender" class="es-link" ><span>{{ props.row.sender }}</span></a></span>
+                        </el-form-item>
+                    </el-form>
+                </template>
+            </el-table-column>
+            <!--交易hash-->
+            <el-table-column prop="hash" :label="$t('message.sharder_trading_hash')" width="90">
+                <template slot-scope="scope">
+                    <a class="hash simpl-hash" :href="'/tx.html?hash='+scope.row.hash">
+                        <el-button type="text" size="small"><span class="simpl-hash">{{scope.row.hash}}</span></el-button>
+                    </a>
+                </template>
+            </el-table-column>
+            <!--创建时间-->
+            <el-table-column :label="$t('message.sharder_creation_time')" width="90">
+                <template slot-scope="scope">
+                    {{new Date().BlockDate(scope.row.timestamp)}}
+                </template>
+            </el-table-column>
+            <!--确认数及其状态-->
+            <el-table-column  :label="$t('message.sharder_confirmation_state')">
+                <template slot-scope="scope">
+                    <span v-if="scope.row.confirmations > 0">
+                        <i class="el-icon-circle-check-outline es-success" ></i> ({{$t('message.sharder_ok_num')}}:{{scope.row.confirmations}})
+                    </span>
+                    <span v-else>
+                        <i class="el-icon-circle-check-outline el-icon-loading" ></i> (pending)
+                    </span>
+                </template>
+            </el-table-column>
+        </el-table>
+
         <!--转账-->
         <el-table :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'zz'">
             <!--折叠面板-->
@@ -241,12 +346,12 @@
                         </el-form-item>
 
                         <!--备份数-->
-                        <el-form-item class="item" :label="$t('message.sharder_backup_number')" >
-                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ props.row.backups.data.length }}{{$t('message.sharder_copies')}}</span></a>
+                        <el-form-item v-if="netWork == 'alpha'" class="item" :label="$t('message.sharder_store')" >
+                            <a :href="'/tx.html?hash='+props.row.hash" class="es-link"><span>{{ props.row.backups[0].backup_Tx }}</span></a>
                         </el-form-item>
 
-                        <el-form-item class="item" :label="$t('message.sharder_backup_effective_block')">
-                            <span>{{ props.row.backups.count }}{{$t('message.sharder_block')}}</span>
+                        <el-form-item v-if="netWork == 'alpha'" class="item" :label="$t('message.sharder_backup_id')">
+                            <span>{{ props.row.backups[0].backup_Tx_confirmations }}</span>
                         </el-form-item>
 
                         <!--文件名称-->
@@ -385,16 +490,22 @@
                 filterTypeRadio:""+this.$t('message.sharder_transfer')+"",   //初始化选择类型
                 selectedType:'zz',       //初始化选择类型
                 originalTxs:[{}],
+                netWork:"",
                 transactionsData:this.transactions,
             }
         },
         props:['transactions','address'],
         methods: {
             filterType() {
+                this.netWork = Util.getLocalStorage("networkState");
                 let value = "";
                 if(this.selectedType === "zz"){
                     value = 0;
-                }else  if(this.selectedType === "cc"){
+                }else  if(this.selectedType === "cb"){
+                    value = 9;
+                }else  if(this.selectedType === "cc" && this.netWork == "alpha"){
+                    value = 11;
+                }else if(this.selectedType === "cc"){
                     value = 6;
                 }else if(this.selectedType === "sjcl"){
                     value = 6;
@@ -405,23 +516,18 @@
                 for (let i=0;i<this.originalTxs.length;i++)
                 {
                     if(this.originalTxs[i].type == value){
-
-                        if (value == '6') {
-                            var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
-                            /*api.methods.getBaseUrl(api.BACKUPS_INFO)*/
-                            axios.get(URL + "&storeHash=" + this.originalTxs[i].hash,{withCredentials:false})  //获取备份相关数据
+                    // if(true){
+                        if (this.netWork == "alpha" && value == '11') {
+                        // if (true) {
+                            var URL = "http://13.228.74.150:8215/sharder?requestType=getBackup";
+                            // var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
+                            axios.get(URL + "&txID=" + this.originalTxs[i].transactionId,{withCredentials:false})  //获取指定存储交易的备份信息
                                 .then(res =>{
-                                    if (res.data !== "") {
-                                        let count = 0;
-                                        for (let j = 0; j < res.data.data.length; j++) {
-                                            count += res.data.data[j].backupEffectiveBlock;
-                                        }
-                                        this.$set(res.data,"count",count);
-                                        this.$set(this.originalTxs[i],"backups",res.data);
+                                    if (res.status == 200) {
+                                        this.$set(this.originalTxs[i],"backups",res.data.backups);
                                     }
                                 }).catch(function (error) {
-
-                                console.log(error)
+                                    console.log(error)
                             })
                         }
                         temporary.push(this.originalTxs[i])
