@@ -2,9 +2,9 @@ import util from './js/util';
 import axios from "axios";
 
 
-// var baseUrl='https://test.sharder.io/sharder';
-var baseUrl='http://13.228.74.150:8215/sharder';
-var networkState = "alpha";
+// var baseUrl='http://13.228.74.150:8215/sharder';
+var baseUrl='https://biz.sharder.io/sharder';
+var networkState = "beta";
 
 const api={
 

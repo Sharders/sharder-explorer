@@ -53,7 +53,7 @@
                         </template>
                     </el-table-column>
 
-                    <el-table-column width="140px" :label="this.$t('message.sharder_trading_type')" :render-header="renderHeader">
+                    <el-table-column width="140px" :label="this.$t('message.sharder_trading_type')" :render-header="PCrenderHeader">
                         <template slot-scope="scope">
                             <span v-for="type in scope.row.types" class="tx_type_tag">
                                 <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
@@ -99,7 +99,7 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column  :render-header="renderHeader">
+                        <el-table-column  :render-header="MOrenderHeader">
                             <template slot-scope="scope">
                             <span v-for="type in scope.row.types" >
                                 <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
@@ -155,7 +155,7 @@
         },
         methods: {
 
-            renderHeader(h,para) {
+            PCrenderHeader(h,para) {
                 var _this = this;
                 var netWork = Util.getLocalStorage("networkState");
                 if (netWork == "alpha") {
@@ -164,7 +164,7 @@
                             h('el-select',{
                                 attrs: {
                                     placeholder:this.$t('message.sharder_trading_type'),
-                                    size:"mini",
+                                    size:"mini"
                                 },
                                 "class":{
                                     "tx-type-PC":true
@@ -173,7 +173,6 @@
                                     change:function (type) {
                                         _this.type = type;
                                         /*var index = _this.lastNum;
-                                        console.log(index)
                                         if (type === '6') {  //取100条以内为存储类型的记录
                                             _this.getTxInfo(_this.firstNum,_this.lastNum + 100,type)//数据拉取条数上限为100
                                             _this.lastNum = index;
@@ -219,7 +218,101 @@
                             h('el-select',{
                                 attrs: {
                                     placeholder:this.$t('message.sharder_trading_type'),
-                                    size:"mini",
+                                    size:"mini"
+                                },
+                                "class":{
+                                    "tx-type-PC":true
+                                },
+                                on:{
+                                    change:function (type) {
+                                        _this.type = type;
+                                        _this.loading = true;
+                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type)
+                                    }
+                                },
+                            },[
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_all'),
+                                        value: ""
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_transfer'),
+                                        value: "0"
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_storage'),
+                                        value: "6"
+                                    }
+                                })
+                            ]),
+
+                        ],'')
+                    )
+                }
+
+            },
+            MOrenderHeader(h,para) {
+                var _this = this;
+                var netWork = Util.getLocalStorage("networkState");
+                if (netWork == "alpha") {
+                    return (
+                        h('span',[
+                            h('el-select',{
+                                attrs: {
+                                    placeholder:this.$t('message.sharder_trading_type'),
+                                    size:"mini"
+                                },
+                                "class":{
+                                    "tx-type-MO":true
+                                },
+                                on:{
+                                    change:function (type) {
+                                        _this.type = type;
+                                        _this.loading = true;
+                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type);
+                                    }
+                                },
+                            },[
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_all'),
+                                        value: ""
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_coin_base'),
+                                        value: "9"
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_transfer'),
+                                        value: "0"
+                                    }
+                                }),
+                                h('el-option',{
+                                    attrs: {
+                                        label:this.$t('message.sharder_storage'),
+                                        value: "6"
+                                    }
+                                })
+                            ]),
+
+                        ],'')
+                    )
+                }else {
+                    return (
+                        h('span',[
+                            h('el-select',{
+                                attrs: {
+                                    placeholder:this.$t('message.sharder_trading_type'),
+                                    size:"mini"
                                 },
                                 "class":{
                                     "tx-type-MO":true
@@ -275,7 +368,7 @@
                 axios.get(api.methods.getBaseUrl(api.BLOCK_INFO) +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex + includeTypes, {withCredentials: true})
                     .then(res => {
                         _this.loading = false;
-                            if(res.data !== null && res.data.length !==0){
+                            /*if(res.data !== null && res.data.length !==0){*/
                                 this.blockInfo = res.data;
                                 this.handleBlockIncludeOfOrderType(this.blockInfo);
                                 Util.storageBlocks(res.data);
@@ -284,7 +377,7 @@
                                     Util.setlocalStorage("prevBlockTime", this.prevBlockTime(res.data));
                                     Util.setlocalStorage("avgBlockTime", this.avgBlockTime(res.data));
                                 }
-                            }
+                            /*}*/
                     }).catch(function (error) {
                         _this.loading = false;
                         console.log(error);
@@ -338,15 +431,25 @@
 <style lang="postcss">
 
     .tx-type-PC{
-        width: 140px;
+        width: 126px;
         margin-left: -25px;
+    }
+    .tx-type-PC > .el-input > .el-input__inner{
+        width: 94px;
     }
     .tx-type-MO{
         width: 135px;
         margin-left: -30px;
     }
-
-
+    .tx-type-MO > .el-input{
+        width: 105px;
+    }
+    .tx-type-MO > .el-input > .el-input__inner{
+        padding-right: 20px;
+    }
+    .tx-type-MO > .el-input > .el-input__suffix > .el-input__suffix-inner > .el-icon-arrow-up{
+        width: 34px;
+    }
     .es-main > .table {
         border-radius: initial;
         box-shadow: initial;

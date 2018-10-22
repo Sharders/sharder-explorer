@@ -50,7 +50,7 @@ const cn = {
         'sharder_block_ID': '区块ID',
         'sharder_storage': '存储',
         'sharder_transfer': '转账',
-        'sharder_coin_base': 'coin base',
+        'sharder_coin_base': 'Coinbase',
         'sharder_all': '全部',
         'sharder_backup_state': '备份成功',
         'sharder_data_management': '数据处理',

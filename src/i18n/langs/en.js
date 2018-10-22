@@ -53,7 +53,7 @@ const en = {
         'sharder_block_ID': 'Block ID',
         'sharder_storage': 'Storage',
         'sharder_transfer': 'Transfer',
-        'sharder_coin_base': 'coin base',
+        'sharder_coin_base': 'Coinbase',
         'sharder_all': 'all',
         'sharder_backup_state': 'backup success',
         'sharder_data_management': 'Data Management',

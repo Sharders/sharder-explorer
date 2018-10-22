@@ -9,7 +9,8 @@
                         <h2 class="t-d">Sharder Block Explorer</h2>
                     </span>
                 </a>
-                <span class="alpha">{{netWork}}</span>
+                <span class="alpha" v-if="netWork == null">beta</span>
+                <span class="alpha" v-else >{{netWork}}</span>
             </div>
             <es-search class="header-search" :class="{ show_mobile_search_block: show_mobile_search }" @searchText="searchText"></es-search>
 
