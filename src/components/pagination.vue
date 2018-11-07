@@ -4,6 +4,7 @@
             :page-size="pageSize"
             layout="prev, pager, next, jumper"
             :total="totalNum" class="es-pagination"
+            :current-page.sync="currentPage"
             @current-change="currentPageChange">
     </el-pagination>
 </template>
@@ -24,7 +25,7 @@
                 lastIndex:9,
             }
         },
-        props:['totalNum'],
+        props:['totalNum','currentPage'],
         methods:{
             currentPageChange(val){
                 val -= 1;

@@ -9,7 +9,6 @@
         </div>
 
         <!------------------------------------------pc 端的转账存储 start------------------------------------------------------>
-
         <!--coin base-->
         <el-table :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'cb'">
             <!--折叠面板-->
@@ -258,7 +257,6 @@
                 </template>
             </el-table-column>
         </el-table>
-
         <!--转账-->
         <el-table :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'zz'">
             <!--折叠面板-->
@@ -479,7 +477,7 @@
 <script>
     import Util from '../assets/js/util';
     import axios from "axios";
-    /*import api from '../../assets/api';*/
+    import api from "../assets/api";
 
     export default {
         name: "tx_list",
@@ -516,12 +514,8 @@
                 for (let i=0;i<this.originalTxs.length;i++)
                 {
                     if(this.originalTxs[i].type == value){
-                    // if(true){
                         if (this.netWork == "alpha" && value == '11') {
-                        // if (true) {
-                            var URL = "http://13.228.74.150:8215/sharder?requestType=getBackup";
-                            // var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
-                            axios.get(URL + "&txID=" + this.originalTxs[i].transactionId,{withCredentials:false})  //获取指定存储交易的备份信息
+                            axios.get(api.methods.getBaseUrl(api.BACKUPS_INFO) + "&txID=" + this.originalTxs[i].transactionId,{withCredentials:false})  //获取指定存储交易的备份信息
                                 .then(res =>{
                                     if (res.status == 200) {
                                         this.$set(this.originalTxs[i],"backups",res.data.backups);

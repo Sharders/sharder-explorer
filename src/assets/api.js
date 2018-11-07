@@ -3,7 +3,8 @@ import axios from "axios";
 
 
 // var baseUrl='http://13.228.74.150:8215/sharder';
-var baseUrl='https://biz.sharder.io/sharder';
+// var baseUrl='https://biz.sharder.io/sharder';
+var baseUrl='http://localhost:8080';
 var networkState = "beta";
 
 const api={
@@ -17,28 +18,34 @@ const api={
     TX:"?requestType=getTx", //获取指定交易数据
     TX_STATISTICS:"?requestType=getTxStatistics", //获取统计数据
     BACKUPS_INFO:"?requestType=getBackup",//获取备份相关数据
+    // SERVICE_BLOCK_INFO:"https://sharder.org/blocks/explorer.ss",
+    // SERVICE_BLOCK_INFO:"http://localhost:8080/blocks/getBizBlocks.ss", //获取区块信息
+    SERVICE_BLOCK_INFO:"/blocks/getBizBlocks.ss", //获取区块信息
+    // SERVICE_BLOCK_INFO:"https://sharder.org/blocks/getBizBlocks.ss", //获取区块信息
+
 
     methods:{
-        transferNetwork(networkTyp){  //切换分为:主动切换（首页右上方点击网络切换），被动切换:点击交互按钮时判断localStorage来切换
+        transferNetwork(networkTyp){
             if (networkTyp === 'beta') {
                 baseUrl = "https://biz.sharder.io/sharder";
-                util.setlocalStorage("networkState",'beta');
+                localStorage.setItem("networkState","beta");
             }else {
                 baseUrl = "https://test.sharder.io/sharder";
-                util.setlocalStorage("networkState",'alpha');
+                localStorage.setItem("networkState","alpha");
             }
         },
         getBaseUrl(path){
-            let networkState = util.getLocalStorage("networkState");
-            if (networkState !== null){
-                this.transferNetwork(networkState);  //开启切换网络
-            }
+            // let networkState = localStorage.getItem("networkState");
+            // if (networkState !== null){
+            //     this.transferNetwork(networkState);  //开启切换网络
+            // }
+            console.log("baseURL:" + path)
+            console.log(baseUrl+path)
             return baseUrl+path;
         },
         getLastHeight:function (_callBack) {
-            axios.get(api.BLOCK_HEIGHT,{withCredentials:true}).then(res=>{
-                util.setlocalStorage("LAST_BLOCK_HEIGHT",res.data.height);
-
+            axios.get(api.methods.getBaseUrl(api.BLOCK_HEIGHT),{withCredentials:true}).then(res=>{
+                localStorage.setItem("LAST_BLOCK_HEIGHT",res.data.height);
                 if(typeof _callBack === 'function'){
                     _callBack(res.data);
                 }
@@ -48,7 +55,7 @@ const api={
         },
         getServerConstant:function () {
             axios.get(api.methods.getBaseUrl(api.SERVER_CONSTANT),{withCredentials:true}).then(res=>{
-                util.setJsonLocalStorage("SERVER_CONSTANT",res.data);
+                localStorage.setItem("SERVER_CONSTANT",res.data);
             }).catch(function (error) {
                 console.log(error);
             })

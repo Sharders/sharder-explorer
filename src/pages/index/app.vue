@@ -117,7 +117,7 @@
                 </div>
             </el-row>
             <el-row  class="es-main">
-                    <el-pagination  @pagingParams="paging" :totalNum="totalNum"></el-pagination>
+                    <el-pagination  @pagingParams="paging" :totalNum="totalNum" :currentPage="currentPage"></el-pagination>
             </el-row>
         </el-main>
         <el-footer>Footer</el-footer>
@@ -144,10 +144,11 @@
         data() {
             return {
                 totalNum:0,
-                blockInfo: [{}],
+                blockInfo: [],
                 tradingType:"",
                 searchText:'',
                 loading: true,
+                currentPage:1,
                 firstNum:0,
                 lastNum:0,
                 type:"",
@@ -172,15 +173,9 @@
                                 on:{
                                     change:function (type) {
                                         _this.type = type;
-                                        /*var index = _this.lastNum;
-                                        if (type === '6') {  //取100条以内为存储类型的记录
-                                            _this.getTxInfo(_this.firstNum,_this.lastNum + 100,type)//数据拉取条数上限为100
-                                            _this.lastNum = index;
-                                        }else{
-                                            _this.getTxInfo(_this.firstNum,_this.lastNum,type)
-                                        }*/
                                         _this.loading = true;
-                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type);
+                                        _this.currentPage = 1;
+                                        _this.getTxInfo(0,_this.lastNum,type);
                                     }
                                 },
                             },[
@@ -227,7 +222,9 @@
                                     change:function (type) {
                                         _this.type = type;
                                         _this.loading = true;
-                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type)
+                                        _this.currentPage = 1;
+                                        _this.getTxInfo(0,_this.lastNum,type);
+
                                     }
                                 },
                             },[
@@ -274,7 +271,8 @@
                                     change:function (type) {
                                         _this.type = type;
                                         _this.loading = true;
-                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type);
+                                        _this.currentPage = 1;
+                                        _this.getTxInfo(0,_this.lastNum,type);
                                     }
                                 },
                             },[
@@ -321,7 +319,8 @@
                                     change:function (type) {
                                         _this.type = type;
                                         _this.loading = true;
-                                        _this.getTxInfo(_this.firstNum,_this.lastNum,type)
+                                        _this.currentPage = 1;
+                                        _this.getTxInfo(0,_this.lastNum,type);
                                     }
                                 },
                             },[
@@ -365,19 +364,15 @@
                     firstIndex = 0;
                     lashIndex = 9;
                 }
-                axios.get(api.methods.getBaseUrl(api.BLOCK_INFO) +"&firstIndex="+ firstIndex + "&lastIndex=" + lashIndex + includeTypes, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.SERVICE_BLOCK_INFO) +"?firstIndex="+ (firstIndex/10 + 1) + "&lastIndex=" + 10 + includeTypes)
+                // axios.get(api.SERVICE_BLOCK_INFO +"?firstIndex="+ (firstIndex/10 + 1) + "&lastIndex=" + 10 + includeTypes)
                     .then(res => {
                         _this.loading = false;
-                            /*if(res.data !== null && res.data.length !==0){*/
-                                this.blockInfo = res.data;
-                                this.handleBlockIncludeOfOrderType(this.blockInfo);
-                                Util.storageBlocks(res.data);
-                                if (res.data.length !==0 && firstIndex === 0) {
-                                    this.totalNum = res.data[0].height;
-                                    Util.setlocalStorage("prevBlockTime", this.prevBlockTime(res.data));
-                                    Util.setlocalStorage("avgBlockTime", this.avgBlockTime(res.data));
-                                }
-                            /*}*/
+                        this.blockInfo = res.data.list;
+                        console.log(this.blockInfo)
+                        this.totalNum = res.data.totalCount;
+                        this.handleBlockIncludeOfOrderType(this.blockInfo);
+                        Util.storageBlocks(res.data);
                     }).catch(function (error) {
                         _this.loading = false;
                         console.log(error);
@@ -385,6 +380,7 @@
             },
             paging(firstIndex,lashIndex){
                 this.loading = true;
+                this.currentPage = firstIndex/10 + 1;
                 this.getTxInfo(firstIndex,lashIndex,this.type);
             },
             prevBlockTime(data){
@@ -401,14 +397,12 @@
                 return ((sum / data.length) * 1000);
             },
             handleBlockIncludeOfOrderType(_data){
-
-
-
                 for (let i = 0; i < _data.length; i++) {
 
-                    let transac = _data[i].transactions;
+                    // let transac = _data[i].transactions;
+                    let transac = _data[i].transactionsDto;
                     let IncludeOfType = new Array();
-
+                    console.log(transac.length)
                     for (let k = 0; k < transac.length; k++) {
                         if(IncludeOfType.indexOf(transac[k].type) < 0){
                             IncludeOfType.push(transac[k].type);
@@ -417,9 +411,6 @@
 
                     _data[i].types  = IncludeOfType;
                 }
-
-
-
             }
         },
         created() {

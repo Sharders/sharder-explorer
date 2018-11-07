@@ -123,6 +123,7 @@
             getTxStatistics(){
                 axios.get(api.methods.getBaseUrl(api.TX_STATISTICS),{withCredentials: true}).then(res =>{
                     this.statistical = res.data;
+                    console.log(res)
                     this.statistical.prevBlockTime = Util.getLocalStorage("prevBlockTime");
                     this.statistical.avgBlockTime = Util.getLocalStorage("avgBlockTime");
                 }).catch(function (error) {

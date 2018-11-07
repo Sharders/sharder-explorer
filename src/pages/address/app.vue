@@ -69,7 +69,7 @@
                     });
             },
             getAccountTxs(firstIndex,lashIndex) {
-                axios.get(api.ADDR_TRANSACTION + "&account=" + this.addr + "&firstIndex="+firstIndex+"&lastIndex="+lashIndex, {withCredentials: true})
+                axios.get(api.methods.getBaseUrl(api.ADDR_TRANSACTION) + "&account=" + this.addr + "&firstIndex="+firstIndex+"&lastIndex="+lashIndex, {withCredentials: true})
                     .then(res => {
                         this.transaction = res.data;
                         this.showlist = true;

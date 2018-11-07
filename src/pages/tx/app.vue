@@ -78,7 +78,7 @@
                     <span class="key">{{$t('message.sharder_service_charge')}}</span>
                     <span class="value amount">{{Number().amountFormat(transactions.fee)}}</span>
                 </div>
-                <div v-if="txType">
+                <div v-if="backups.backup_Tx != null">
                     <!--备份交易ID-->
                     <div class="text item">
                         <span class="key">{{$t('message.sharder_backup_id')}}</span>
@@ -270,12 +270,12 @@
                 }
             },
             getBackups(hash){
-                // var URL = "http://mock.eolinker.com/71VBNk36c9b62a9bb1c6072010850b2b4230310bf63bf66?uri=http://49.4.9.166:8215/sharder?requestType=getBackup";
-                var URL = "http://13.228.74.150:8215/sharder?requestType=getBackup";
-                axios.get(URL + "&txID=" + hash,{withCredentials:false})
+                axios.get(api.methods.getBaseUrl(api.BACKUPS_INFO) + "&txID=" + hash,{withCredentials:false})
                     .then(data =>{
-                        this.backups = data.data.backups[0];
-                        this.tableData = data.data.backups;
+                        if (data.data.errorCode == undefined) {
+                            this.backups = data.data.backups[0];
+                            this.tableData = data.data.backups;
+                        }
                     })
             }
         },

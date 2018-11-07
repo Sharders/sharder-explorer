@@ -100,7 +100,7 @@
                 }
             },
             storageTrade() {
-                Util.storageTrade(this.blockInfo.transactions);
+                Util.storageTrade(this.blockInfo.transactionsDto);
             },
             previousNext(){
                 let _lastHeight = Util.getLocalStorage("LAST_BLOCK_HEIGHT");
@@ -112,6 +112,7 @@
                 if(_height < _lastHeight){
                     this.blockInfo.nextp = _height + 1;
                 }
+                console.log(this.blockInfo )
                 console.log(_lastHeight +"最后高度")
             }
 
