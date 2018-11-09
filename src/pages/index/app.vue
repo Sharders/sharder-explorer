@@ -364,15 +364,16 @@
                     firstIndex = 0;
                     lashIndex = 9;
                 }
-                axios.get(api.methods.getBaseUrl(api.SERVICE_BLOCK_INFO) +"?firstIndex="+ (firstIndex/10 + 1) + "&lastIndex=" + 10 + includeTypes)
+                axios.get(api.methods.getBaseUrl(api.SERVICE_BLOCK_INFO) +"&firstIndex="+ (firstIndex/10 + 1) + "&lastIndex=" + 10 + includeTypes)
                 // axios.get(api.SERVICE_BLOCK_INFO +"?firstIndex="+ (firstIndex/10 + 1) + "&lastIndex=" + 10 + includeTypes)
                     .then(res => {
                         _this.loading = false;
+                        Util.setlocalStorage("prevBlockTime", this.prevBlockTime(res.data.list));
+                        Util.setlocalStorage("avgBlockTime", this.avgBlockTime(res.data.list));
                         this.blockInfo = res.data.list;
-                        console.log(this.blockInfo)
                         this.totalNum = res.data.totalCount;
                         this.handleBlockIncludeOfOrderType(this.blockInfo);
-                        Util.storageBlocks(res.data);
+                        Util.storageBlocks(res.data.list);
                     }).catch(function (error) {
                         _this.loading = false;
                         console.log(error);
@@ -398,11 +399,11 @@
             },
             handleBlockIncludeOfOrderType(_data){
                 for (let i = 0; i < _data.length; i++) {
-
-                    // let transac = _data[i].transactions;
                     let transac = _data[i].transactionsDto;
+                    if (transac == null) {
+                        continue;
+                    }
                     let IncludeOfType = new Array();
-                    console.log(transac.length)
                     for (let k = 0; k < transac.length; k++) {
                         if(IncludeOfType.indexOf(transac[k].type) < 0){
                             IncludeOfType.push(transac[k].type);

@@ -35,7 +35,7 @@
                 <div class="text item"><span class="key">{{$t('message.sharder_transaction_amount')}}</span><span
                         class="value amount">{{Number().amountFormat(blockInfo.totalAmount)}}</span></div>
             </el-card>
-            <es-tx-list :transactions="blockInfo.transactions" class="table block-table" v-if="showlist"></es-tx-list>
+            <es-tx-list :transactions="blockInfo.transactionsDto" class="table block-table" v-if="showlist"></es-tx-list>
         </el-main>
         <el-footer>Footer</el-footer>
     </el-container>
@@ -75,7 +75,7 @@
         data() {
             return {
                 blockInfo: [{}],
-                showlist:false,
+                showlist:false
             }
         },
         methods: {
@@ -85,6 +85,8 @@
                     axios.get(api.methods.getBaseUrl(api.BLOCK_BY_HEIGHT) + "&height=" + _height, {withCredentials: true})
                         .then(res => {
                             this.blockInfo = res.data;
+                            this.blockInfo.transactionsDto = this.blockInfo.transactions;
+                            delete this.blockInfo.transactions;
                             this.showlist = true;
                             this.storageTrade();
                             this.previousNext();
@@ -104,7 +106,6 @@
             },
             previousNext(){
                 let _lastHeight = Util.getLocalStorage("LAST_BLOCK_HEIGHT");
-
                 let _height = this.blockInfo.height;
                 if(_height > 0){
                     this.blockInfo.prevp = _height - 1;
@@ -112,7 +113,6 @@
                 if(_height < _lastHeight){
                     this.blockInfo.nextp = _height + 1;
                 }
-                console.log(this.blockInfo )
                 console.log(_lastHeight +"最后高度")
             }
 

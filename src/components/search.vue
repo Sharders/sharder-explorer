@@ -135,8 +135,9 @@
                 }
                 axios.get(api.methods.getBaseUrl(api.BLOCK_BY_HEIGHT) + "&height=" + this.searchText, {withCredentials: true})
                     .then(res => {
-                        console.log(res);
                         if(Util.isEmpty(res.data.errorCode)){
+                            res.data.transactionsDto = res.data.transactions;
+                            delete res.data.transactions;
                             Util.storageBlock(res.data);
                             this.success("/block.html?height=");
                         }else{
