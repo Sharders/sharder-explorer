@@ -10,7 +10,8 @@ var serviceURLs = [
     "/blocks/getLastBlockHeight.ss",
     "/blocks/getBizConstants.ss",
     "/blocks/getTxStatistics.ss",
-    "/blocks/getBizBlocks.ss"
+    "/blocks/getBizBlocks.ss",
+    "/blocks/getTransactions.ss"
 ];
 
 
@@ -31,6 +32,7 @@ const api={
     SERVER_CONSTANT:"/blocks/getBizConstants.ss",//获取区块链相关常量信息
     TX_STATISTICS:"/blocks/getTxStatistics.ss", //获取统计数据
     SERVICE_BLOCK_INFO:"/blocks/getBizBlocks.ss", //获取区块信息
+    TRANSACTIONS_INFO:"/blocks/getTransactions.ss", //获取区块信息
 
 
     methods:{
@@ -49,8 +51,8 @@ const api={
             var isService = true;
             for (var i = 0; i < serviceURLs.length; i++) {
                 if (serviceURLs[i] == path) {
-                    baseUrl = "http://localhost:8080";
-                    // baseUrl = "https://sharder.org";
+                    // baseUrl = "http://localhost:8080";
+                    baseUrl = "https://sharder.org";
                     isService = false;
                 }
             }

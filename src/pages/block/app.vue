@@ -35,7 +35,8 @@
                 <div class="text item"><span class="key">{{$t('message.sharder_transaction_amount')}}</span><span
                         class="value amount">{{Number().amountFormat(blockInfo.totalAmount)}}</span></div>
             </el-card>
-            <es-tx-list :transactions="blockInfo.transactionsDto" class="table block-table" v-if="showlist"></es-tx-list>
+
+            <es-tx-list :transactions="blockInfo" class="table block-table" v-if="showlist"></es-tx-list>
         </el-main>
         <el-footer>Footer</el-footer>
     </el-container>

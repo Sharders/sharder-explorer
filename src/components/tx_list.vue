@@ -7,10 +7,9 @@
                 <el-radio-button class="select-btn"  :label="$t('message.sharder_storage')"  @click.native="selectedType='cc'"></el-radio-button>
             </el-radio-group>
         </div>
-
         <!------------------------------------------pc 端的转账存储 start------------------------------------------------------>
         <!--coin base-->
-        <el-table :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'cb'">
+        <el-table v-loading="loading" :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'cb'">
             <!--折叠面板-->
             <el-table-column type="expand">
                 <template slot-scope="props">
@@ -73,7 +72,7 @@
         </el-table>
 
         <!--转账-->
-        <el-table :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'zz'">
+        <el-table v-loading="loading" :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'zz'">
             <!--折叠面板-->
             <el-table-column type="expand">
                 <template slot-scope="props">
@@ -139,7 +138,7 @@
             </el-table-column>
         </el-table>
         <!--存储-->
-        <el-table :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'cc'">
+        <el-table v-loading="loading" :data="transactionsData" class="table hidden-xs-only" v-show="selectedType === 'cc'">
             <!--折叠信息块-->
             <el-table-column type="expand">
                 <template slot-scope="props">
@@ -171,21 +170,21 @@
 
             <!--客户地址-->
             <el-table-column :label="$t('message.client_account')">
-                <template slot-scope="scope" v-if="scope.row.data != null && scope.row.data != ''">
-                    <a :href="'/address.html?addr='+scope.row.data.clientAccount" class="es-link">{{scope.row.data.clientAccount || ''}}</a>
+                <template slot-scope="scope" v-if="scope.row.blockStoregeDto != null && scope.row.blockStoregeDto != ''">
+                    <a :href="'/address.html?addr='+scope.row.blockStoregeDto.clientAccount" class="es-link">{{scope.row.blockStoregeDto.clientAccount || ''}}</a>
                 </template>
             </el-table-column>
 
             <!--文件名称-->
             <el-table-column :label="$t('message.sharder_file_name')">
-                <template slot-scope="scope" v-if="scope.row.data != null && scope.row.data != ''">
-                    {{scope.row.data.fileName || ''}}
+                <template slot-scope="scope" v-if="scope.row.blockStoregeDto != null && scope.row.blockStoregeDto != ''">
+                    {{scope.row.blockStoregeDto.fileName || ''}}
                 </template>
             </el-table-column>
             <!--文件类型-->
             <el-table-column :label="$t('message.sharder_file_type')">
-                <template slot-scope="scope" v-if="scope.row.data != null && scope.row.data != ''">
-                    <el-tag>{{scope.row.data.fileType || ''}}</el-tag>
+                <template slot-scope="scope" v-if="scope.row.blockStoregeDto != null && scope.row.blockStoregeDto != ''">
+                    <el-tag>{{scope.row.blockStoregeDto.fileType || ''}}</el-tag>
                 </template>
             </el-table-column>
 
@@ -219,7 +218,7 @@
         <!------------------------------------------mobile 端的转账存储 start------------------------------------------------------>
 
         <!--coin base-->
-        <el-table :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'cb'">
+        <el-table v-loading="loading" :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'cb'">
             <!--折叠面板-->
             <el-table-column  type="expand" width="40" >
                 <template slot-scope="props" >
@@ -258,7 +257,7 @@
             </el-table-column>
         </el-table>
         <!--转账-->
-        <el-table :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'zz'">
+        <el-table v-loading="loading" :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'zz'">
             <!--折叠面板-->
             <el-table-column  type="expand" width="40" >
                 <template slot-scope="props" >
@@ -320,7 +319,7 @@
             </el-table-column>
         </el-table>
         <!--存储-->
-        <el-table  :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'cc'">
+        <el-table v-loading="loading" :data="transactionsData" class="table hidden-sm-and-up table-lists table-lists-mobile" v-show="selectedType === 'cc'">
             <!--折叠信息块-->
             <el-table-column type="expand" width="40">
                 <template slot-scope="props" >
@@ -333,8 +332,8 @@
                         </el-form-item>
                         <!--客户地址-->
                         <el-form-item class="item" label-width="120" :label="$t('message.client_account')">
-                            <span v-if="props.row.data != null && props.row.data != ''">
-                                <a :href="'/address.html?addr='+props.row.data.clientAccount" class="es-link">{{props.row.data.clientAccount || ''}}</a>
+                            <span v-if="props.row.blockStoregeDto != null && props.row.blockStoregeDto != ''">
+                                <a :href="'/address.html?addr='+props.row.blockStoregeDto.clientAccount" class="es-link">{{props.row.blockStoregeDto.clientAccount || ''}}</a>
                             </span>
                         </el-form-item>
 
@@ -354,14 +353,14 @@
 
                         <!--文件名称-->
                         <el-form-item class="item"  :label="$t('message.sharder_file_name')" >
-                            <span v-if="props.row.data != null && props.row.data != ''"> {{props.row.data.fileName || ''}}</span>
+                            <span v-if="props.row.blockStoregeDto != null && props.row.blockStoregeDto != ''"> {{props.row.blockStoregeDto.fileName || ''}}</span>
 
                         </el-form-item>
 
 
                         <!--文件类型-->
                         <el-form-item class="item"  :label="$t('message.sharder_file_type')">
-                            <span><el-tag>{{props.row.data.fileType || ''}}</el-tag></span>
+                            <span><el-tag>{{props.row.blockStoregeDto.fileType || ''}}</el-tag></span>
                         </el-form-item>
 
                     </el-form>
@@ -396,7 +395,9 @@
             </el-table-column>
         </el-table>
         <!--mobile 端的转账存储 end-->
-
+        <el-row  class="es-main" v-if="transactionsData != '' && netWork == 'beta'">
+            <el-pagination  @pagingParams="paging" :totalNum="transactions.numberOfTransactions" :currentPage="currentPage"></el-pagination>
+        </el-row>
     </div>
 </template>
 
@@ -478,24 +479,57 @@
     import Util from '../assets/js/util';
     import axios from "axios";
     import api from "../assets/api";
-
+    import pagination from 'components/pagination.vue'
     export default {
         name: "tx_list",
+        components: {
+            "el-pagination":pagination
+        },
         data() {
             return {
-                resData:[{}],
-                blockInfo: [{}],
+                resData:[],
+                blockInfo: [],
                 filterTypeRadio:""+this.$t('message.sharder_transfer')+"",   //初始化选择类型
                 selectedType:'zz',       //初始化选择类型
-                originalTxs:[{}],
+                originalTxs:[],
                 netWork:"",
-                transactionsData:this.transactions,
+                transactionsData:[],
+                currentPage:1,
+                loading:false,
+                height:0,
             }
         },
         props:['transactions','address'],
         methods: {
             filterType() {
-                this.netWork = Util.getLocalStorage("networkState");
+                console.log("test")
+                let value = this.getType();
+                this.paging(0,10,value);
+            },
+            paging(firstIndex,lashIndex,val){
+                this.loading = true;
+                firstIndex = firstIndex / 10 + 1;
+                let value = this.getType();
+                if (val != null) {
+                    value = val;
+                }
+                axios.get(api.methods.getBaseUrl(api.TRANSACTIONS_INFO) + "&height=" + this.height + "&type=" + value + "&pageNo=" + firstIndex + "&pageSize=" + 10)
+                    .then(res =>{
+                    console.log(res)
+                        this.transactionsData = res.data;
+                        console.log(this.transactionsData)
+
+                        this.currentPage = firstIndex;
+                        this.loading = false;
+                }).catch((error) =>{
+                    console.log(error)
+                    this.loading = false;
+                })
+            },
+            getTransactionsByAccount(){
+
+            },
+            getType(){
                 let value = "";
                 if(this.selectedType === "zz"){
                     value = 0;
@@ -507,35 +541,12 @@
                     value = 6;
                 }else if(this.selectedType === "sjcl"){
                     value = 6;
-                }else {
-                    return;
                 }
-                let  temporary = new Array();
-                for (let i=0;i<this.originalTxs.length;i++)
-                {
-                    if(this.originalTxs[i].type == value){
-                        if (this.netWork == "alpha" && value == '11') {
-                            axios.get(api.methods.getBaseUrl(api.BACKUPS_INFO) + "&txID=" + this.originalTxs[i].transactionId,{withCredentials:false})  //获取指定存储交易的备份信息
-                                .then(res =>{
-                                    if (res.status == 200) {
-                                        this.$set(this.originalTxs[i],"backups",res.data.backups);
-                                    }
-                                }).catch(function (error) {
-                                    console.log(error)
-                            })
-                        }
-                        temporary.push(this.originalTxs[i])
-                    }
-                }
-                this.transactionsData = temporary;
-
-                if(Util.isEmpty(temporary) && Util.isNotEmpty(this.transactionsData)){
-                    this.nodata();
-                }
+                return value;
             },
             startup(){
-                if(Util.isNotEmpty(this.transactions)){
-                    this.originalTxs = Util.jsonDeepCopy(this.transactions);
+                if(Util.isNotEmpty(this.transactions.transactionsDto)){
+                    this.originalTxs = Util.jsonDeepCopy(this.transactions.transactionsDto);
                     this.filterType();
                 }else if(Util.isNotEmpty(this.transactionsData)){
                     this.nodata();
@@ -548,6 +559,12 @@
                     type: 'warning'
                 });
             }
+        },
+        created(){
+            let value = this.getType();
+            this.netWork = Util.getLocalStorage("networkState");
+            this.height = this.transactions.height;
+            this.paging(0,10,value);
         },
         mounted() {
             this.startup();

@@ -55,14 +55,12 @@
 
                     <el-table-column width="140px" :label="this.$t('message.sharder_trading_type')" :render-header="PCrenderHeader">
                         <template slot-scope="scope">
-                            <span v-for="type in scope.row.types" class="tx_type_tag">
-                                <el-tag size="mini" v-if="type == '0'" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
+                                <el-tag size="mini" v-if="scope.row.txTransfer == 1" type="primary">{{$t('message.sharder_transfer')}}</el-tag>
 
-                                <el-tag size="mini" v-if="type == '6'" type="success">{{$t('message.sharder_storage')}}</el-tag>
+                                <el-tag size="mini" v-if="scope.row.txStorage == 1" type="success">{{$t('message.sharder_storage')}}</el-tag>
 
-                                <el-tag size="mini" v-if="type == '9'" type="warning">{{$t('message.sharder_coin_base')}}</el-tag>
+                                <el-tag size="mini" v-if="scope.row.txCoinBase == 1" type="warning">{{$t('message.sharder_coin_base')}}</el-tag>
 
-                            </span>
                         </template>
                     </el-table-column>
                     <el-table-column  :label="this.$t('message.sharder_operation')" width="80px">
@@ -197,12 +195,6 @@
                                         value: "0"
                                     }
                                 }),
-                                h('el-option',{
-                                    attrs: {
-                                        label:this.$t('message.sharder_storage'),
-                                        value: "6"
-                                    }
-                                })
                             ]),
 
                         ],'')
@@ -292,12 +284,6 @@
                                     attrs: {
                                         label:this.$t('message.sharder_transfer'),
                                         value: "0"
-                                    }
-                                }),
-                                h('el-option',{
-                                    attrs: {
-                                        label:this.$t('message.sharder_storage'),
-                                        value: "6"
                                     }
                                 })
                             ]),
